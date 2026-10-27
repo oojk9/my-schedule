@@ -222,12 +222,42 @@ body.gated main{padding-block:8px calc(40px + env(safe-area-inset-bottom,0px))}
 .pj-prog b{font:400 20px/1 var(--f-display);color:var(--c);min-width:46px;text-align:right;font-variant-numeric:tabular-nums}
 .pj-meta,.pj-next{font-size:13px;color:var(--ink-2)}
 .pj-next{color:var(--ink)}
-.done-grp summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:34px}
-.done-grp summary::-webkit-details-marker{display:none}
-.done-grp summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--ink-2);border-bottom:2px solid var(--ink-2);transform:rotate(-45deg);transition:transform .15s}
-.done-grp[open] summary::before{transform:rotate(45deg)}
-.done-grp summary h2{font-size:16px;font-weight:700}
-.done-grp .pj-list{margin-top:10px}
+.fold summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:40px;border-radius:10px;-webkit-tap-highlight-color:transparent}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary::before{content:"";width:7px;height:7px;margin:0 2px 0 4px;border-right:2px solid var(--ink-2);border-bottom:2px solid var(--ink-2);transform:rotate(-45deg);transition:transform .15s}
+.fold[open] summary::before{transform:rotate(45deg)}
+.fold summary:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+.fold summary h2{font-size:16px;font-weight:700}
+.fold.sec{display:block}
+.fold>.pj-list,.fold>.pj-sort{margin-top:8px}
+.fold:not([open]) summary .muted::after{content:" · 접힘";font-weight:500;color:var(--ink-3)}
+.head-acts{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
+@media (max-width:374px){.nh{display:none}}
+
+/* 순서 바꾸기 */
+.sort-hint{display:flex;gap:8px;align-items:flex-start;background:var(--pine-wash);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.5}
+.sort-hint svg{flex:none;width:18px;height:18px;margin-top:1px;fill:var(--pine)}
+.pj-sort{list-style:none;padding:0;max-width:720px}
+.srow{position:relative;display:flex;align-items:center;gap:4px;min-height:58px;padding:5px 8px 5px 2px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .18s ease}
+.srow+.srow{border-top:1px solid var(--rule)}
+.srow:first-child{border-radius:13px 13px 0 0}
+.srow:last-child{border-radius:0 0 13px 13px}
+.srow:only-child{border-radius:13px}
+.grip{display:grid;place-items:center;width:44px;height:48px;flex:none;color:var(--ink-3);cursor:grab;touch-action:none;border-radius:10px}
+.grip:hover{color:var(--ink-2);background:var(--sheet-2)}
+.grip svg{width:20px;height:20px;fill:currentColor}
+.grip.off{visibility:hidden}
+.srow .pj-dot{margin-right:6px}
+.srow-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.srow-main b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow-main small{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.srow .mv{display:flex;gap:4px;flex:none}
+.mvb{width:40px;height:40px;color:var(--ink-2)}
+.mvb:disabled{opacity:.3;cursor:default;background:var(--sheet)}
+.pj-sort.dragging,.pj-sort.dragging .grip{cursor:grabbing}
+.srow.lift{z-index:3;transition:none;background:var(--sheet);border-radius:12px;border-top-color:transparent;box-shadow:0 0 0 1px var(--rule),0 14px 28px -10px rgba(0,0,0,.4)}
+.srow.moved{animation:moved .9s ease-out}
+@keyframes moved{0%,35%{background-color:var(--pine-wash)}100%{background-color:transparent}}
 
 .pd{display:flex;flex-direction:column;gap:20px}
 .back{align-self:flex-start;margin-left:-6px}
@@ -533,7 +563,7 @@ body.gated .toast{bottom:calc(28px + env(safe-area-inset-bottom,0px))}
 (() => {
 'use strict';
 
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.2.0';
 const FB_VER = '12.11.0';
 const LS_DATA = 'ilsu.data.v1';
 const LS_PREFS = 'ilsu.prefs.v1';
@@ -615,7 +645,12 @@ const ICON = {
   cal: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
   tally: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M12 5v14.5M12 12h6M7 11v8.5M3 19.5h18"/></svg>',
   list: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6.5h10M10 12h10M10 17.5h10"/><path d="M3.5 6.5l1.6 1.6L8 5.2M3.5 12l1.6 1.6L8 10.7"/><circle cx="5.6" cy="17.5" r="1.4"/></svg>',
-  repeat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>'
+  repeat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>',
+  sort: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 19.5V4.5M4.5 8L8 4.5 11.5 8M16 4.5v15M12.5 16l3.5 3.5 3.5-3.5"/></svg>',
+  check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  up: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14.5l6-6 6 6"/></svg>',
+  down: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>',
+  grip: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>'
 };
 
 const curY = () => new Date().getFullYear();
@@ -633,6 +668,8 @@ function buzz() { try { if (navigator.vibrate) navigator.vibrate(12); } catch (e
 function loadPrefs() { try { return JSON.parse(localStorage.getItem(LS_PREFS) || '{}') || {}; } catch (e) { return {}; } }
 const P = Object.assign({ layers: { ev: true, rt: true, log: true, proj: true }, mode: '', installHide: false, migrateHide: false }, loadPrefs());
 P.layers = Object.assign({ ev: true, rt: true, log: true, proj: true }, P.layers || {});
+/* 프로젝트 묶음 펼침 상태 (이 기기에만 기억) */
+P.pjOpen = Object.assign({ active: true, plan: true, hold: true, done: false }, objOr(P.pjOpen));
 function savePrefs() { try { localStorage.setItem(LS_PREFS, JSON.stringify(P)); } catch (e) { /* 저장 안 돼도 괜찮음 */ } }
 
 /* config.js 에 붙여 넣은 Firebase 설정 읽기 (앞뒤에 다른 줄이 있어도 괜찮음) */
@@ -664,7 +701,7 @@ const S = {
   sheet: null,
   ui: {
     tab: TABS.includes(h0) ? h0 : 'today', calYm: ymOf(T0), sel: T0, recYm: ymOf(T0), rtYm: ymOf(T0),
-    layers: P.layers, proj: null, doneOpen: false, rtOffOpen: false, openLogs: {}, drafts: {}, press: null
+    layers: P.layers, proj: null, pjSort: false, pjMoved: null, rtOffOpen: false, openLogs: {}, drafts: {}, press: null
   }
 };
 
@@ -683,8 +720,13 @@ function normProject(id, r) {
   const notes = Array.isArray(r.notes) ? r.notes.filter(n => n && typeof n === 'object').map((n, i) => ({ id: str(n.id, 60) || 'n' + i, date: isDate(n.date) ? n.date : '', text: str(n.text, 500), kind: n.kind === 'status' ? 'status' : '' })) : [];
   return { id, name: str(r.name, 60).trim() || '이름 없는 프로젝트', status: STATUS[r.status] ? r.status : 'plan',
     start: isDate(r.start) ? r.start : '', due: isDate(r.due) ? r.due : '', color: PALETTE.includes(r.color) ? r.color : 'blue',
-    memo: str(r.memo, 1000), tasks, notes, createdAt: num(r.createdAt), updatedAt: num(r.updatedAt) };
+    memo: str(r.memo, 1000), tasks, notes, order: num(r.order), createdAt: num(r.createdAt), updatedAt: num(r.updatedAt) };
 }
+/* 프로젝트 순서: 직접 정한 순서(order) → (순서를 정한 적 없는 옛 기록은) 목표일 → 만든 순서 */
+const pjCmp = (a, b) => a.order - b.order || ((a.due || '9999') < (b.due || '9999') ? -1 : (a.due || '9999') > (b.due || '9999') ? 1 : 0) || a.createdAt - b.createdAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+const PJ_GROUPS = [['active', '진행 중'], ['plan', '준비 중'], ['hold', '보류'], ['done', '완료']];
+const pjOf = s => S.projects.filter(p => p.status === s).sort(pjCmp);
+const pjNextOrder = () => S.projects.reduce((a, p) => Math.max(a, p.order), 0) + 1;
 function normEvent(id, r, ym) {
   return { id, ym, title: str(r.title, 80).trim() || '(제목 없음)', kind: KINDS[r.kind] ? r.kind : 'etc',
     date: isDate(r.date) ? r.date : ym + '-01', time: isTime(r.time) ? r.time : '', place: str(r.place, 60), memo: str(r.memo, 400),
@@ -712,7 +754,7 @@ function normRoutine(id, r) {
 }
 function rebuildRoutines() { S.routines = [...RAW.routines].map(([id, r]) => normRoutine(id, objOr(r))).sort((a, b) => a.order - b.order || a.createdAt - b.createdAt); }
 function rebuildTrackers() { S.trackers = [...RAW.trackers].map(([id, r]) => normTracker(id, objOr(r))).sort((a, b) => a.order - b.order || a.createdAt - b.createdAt); }
-function rebuildProjects() { S.projects = [...RAW.projects].map(([id, r]) => normProject(id, objOr(r))).sort((a, b) => a.createdAt - b.createdAt); }
+function rebuildProjects() { S.projects = [...RAW.projects].map(([id, r]) => normProject(id, objOr(r))).sort(pjCmp); }
 function rebuildMonths() { const m = new Map(); for (const [ym, r] of RAW.months) if (/^\d{4}-\d{2}$/.test(ym)) m.set(ym, parseMonth(ym, r)); S.months = m; }
 
 const trById = id => S.trackers.find(t => t.id === id);
@@ -860,7 +902,7 @@ function installBanner() {
 function viewToday() {
   const t = today(), d = pd(t), ym = ymOf(t), hol = HOL[t];
   const over = S.phase === 'ready' ? overdueItems(t) : [];
-  const act = S.projects.filter(p => p.status === 'active');
+  const act = pjOf('active');
   return `${installBanner()}<div class="today-head"><p class="eyebrow">${d.getFullYear()}년 · 오늘</p><h1 class="today-date">${d.getMonth() + 1}월 ${d.getDate()}일<span>${WD[d.getDay()]}요일</span></h1>${hol ? `<span class="hol-tag">${esc(hol)}</span>` : ''}</div>
   <div class="today-grid"><div class="col">
     <section class="sec"><div class="sec-head"><h2>오늘 일정</h2>${canWrite() ? `<button type="button" class="btn ghost sm" data-act="new-event" data-date="${t}">${ICON.plus}일정</button>` : ''}</div>${listCard(dayItems(t), '오늘은 잡힌 일정이 없어요.')}</section>
@@ -1026,7 +1068,7 @@ function viewRt() {
       </dl>
     </section>`;
   const list = s.occ.length ? `<ul class="card rows">${s.occ.map(o => rowHTML({ k: 'rt', o }, { rtView: true })).join('')}</ul>` : `<div class="card empty"><p>${mlab}에는 돌아오는 루틴이 없어요.</p></div>`;
-  const offList = off.length ? `<details class="sec done-grp" data-tog="rt-off"${S.ui.rtOffOpen ? ' open' : ''}><summary><h2>${mlab}에 없는 루틴 <span class="muted">${off.length}</span></h2></summary><ul class="card rows">${off.map(r => rtOffRow(r, ym)).join('')}</ul></details>` : '';
+  const offList = off.length ? `<details class="sec fold" data-tog="rt-off"${S.ui.rtOffOpen ? ' open' : ''}><summary><h2>${mlab}에 없는 루틴 <span class="muted">${off.length}</span></h2></summary><ul class="card rows">${off.map(r => rtOffRow(r, ym)).join('')}</ul></details>` : '';
   return head + sum + `<section class="sec"><div class="sec-head"><h2>${mlab} 날짜순</h2><span class="hint">확인한 건 체크해 두세요</span></div>${list}</section>` + offList;
 }
 
@@ -1094,18 +1136,35 @@ function logRow(l, tr) {
 /* ----- 프로젝트 ----- */
 function viewProj() {
   if (S.ui.proj) { const p = pjById(S.ui.proj); if (p) return projDetail(p); if (S.phase === 'ready') S.ui.proj = null; else return loadingCard(); }
-  const head = `<div class="view-head"><h1>프로젝트</h1>${canWrite() ? `<button type="button" class="btn sm" data-act="new-project">${ICON.plus}새 프로젝트</button>` : ''}</div>`;
-  if (S.phase !== 'ready') return head + loadingCard();
+  const ready = S.phase === 'ready', w = canWrite();
+  const groups = PJ_GROUPS.map(([s, lab]) => [s, lab, ready ? pjOf(s) : []]).filter(g => g[2].length);
+  const canSort = w && groups.some(g => g[2].length > 1);
+  if (S.ui.pjSort && ready && !canSort) S.ui.pjSort = false; /* 다른 기기에서 지워 옮길 게 없어진 경우 */
+  const sorting = S.ui.pjSort && canSort;
+  const btns = sorting ? `<button type="button" class="btn sm primary" data-act="pj-sort-done">${ICON.check}완료</button>`
+    : w ? `<div class="head-acts">${canSort ? `<button type="button" class="btn ghost sm" data-act="pj-sort" aria-label="순서 바꾸기">${ICON.sort}순서<span class="nh">바꾸기</span></button>` : ''}<button type="button" class="btn sm" data-act="new-project">${ICON.plus}새 프로젝트</button></div>` : '';
+  const head = `<div class="view-head"><h1>프로젝트</h1>${btns}</div>`;
+  if (!ready) return head + loadingCard();
   if (!S.projects.length) return head + emptyCard('이사 준비, 자격증 공부처럼 여러 단계로 나뉘는 일을 프로젝트로 만들어 보세요. 단계를 체크할 때마다 진행률이 올라가요.', '새 프로젝트', 'new-project');
-  const byDue = (a, b) => (a.due || '9999') < (b.due || '9999') ? -1 : (a.due || '9999') > (b.due || '9999') ? 1 : a.createdAt - b.createdAt;
   let h = head;
-  for (const [s, lab] of [['active', '진행 중'], ['plan', '준비 중'], ['hold', '보류']]) {
-    const arr = S.projects.filter(p => p.status === s).sort(byDue);
-    if (arr.length) h += `<section class="sec"><div class="sec-head"><h2>${lab} <span class="muted">${arr.length}</span></h2></div><div class="pj-list">${arr.map(projCard).join('')}</div></section>`;
+  if (sorting) h += `<p class="sort-hint">${ICON.grip}<span>왼쪽 손잡이를 잡고 위아래로 끌거나, 오른쪽 화살표 버튼으로 한 칸씩 옮기세요. 같은 묶음 안에서만 움직이고, 바꾼 순서는 ${S.store && S.store.kind === 'cloud' ? '폰·PC에 함께' : '바로'} 저장돼요.</span></p>`;
+  for (const [s, lab, arr] of groups) {
+    h += `<details class="sec fold pj-grp" data-tog="pj-${s}"${P.pjOpen[s] ? ' open' : ''}><summary><h2>${lab} <span class="muted">${arr.length}</span></h2></summary>${sorting ? sortList(s, lab, arr) : `<div class="pj-list">${arr.map(projCard).join('')}</div>`}</details>`;
   }
-  const dn = S.projects.filter(p => p.status === 'done');
-  if (dn.length) h += `<details class="sec done-grp" data-tog="done"${S.ui.doneOpen ? ' open' : ''}><summary><h2>완료 <span class="muted">${dn.length}</span></h2></summary><div class="pj-list">${dn.map(projCard).join('')}</div></details>`;
   return h;
+}
+/* 순서 바꾸기 화면의 한 줄 */
+function sortList(s, lab, arr) {
+  const mv = S.ui.pjMoved && Date.now() - S.ui.pjMoved.t < 900 ? S.ui.pjMoved.id : '';
+  return `<ol class="card pj-sort" data-grp="${s}" aria-label="${lab} 프로젝트 순서">${arr.map((p, i) => {
+    const { pct, total } = prog(p), solo = arr.length < 2;
+    return `<li class="srow${p.id === mv ? ' moved' : ''}" data-id="${p.id}" style="--c:var(--c-${p.color})">
+      <span class="grip${solo ? ' off' : ''}" aria-hidden="true" title="끌어서 옮기기">${ICON.grip}</span>
+      <span class="pj-dot" aria-hidden="true"></span>
+      <span class="srow-main"><b>${esc(p.name)}</b><small>${i + 1}번째${total ? ` · 진행 ${pct}%` : ''}</small></span>
+      <span class="mv"><button type="button" class="icon-btn mvb" id="mv-u-${p.id}" data-act="pj-move" data-id="${p.id}" data-dir="-1" aria-label="${esc(p.name)} 위로"${i === 0 ? ' disabled' : ''}>${ICON.up}</button><button type="button" class="icon-btn mvb" id="mv-d-${p.id}" data-act="pj-move" data-id="${p.id}" data-dir="1" aria-label="${esc(p.name)} 아래로"${i === arr.length - 1 ? ' disabled' : ''}>${ICON.down}</button></span>
+    </li>`;
+  }).join('')}</ol>`;
 }
 function taskRow(p, tk) {
   const late = !tk.done && tk.due && tk.due < today();
@@ -1257,7 +1316,13 @@ function bannerHTML() {
 }
 
 let raf = 0;
-function render() { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; draw(); }); }
+/* 끌어서 옮기는 동안에는 화면을 다시 그리지 않음 (손가락 밑의 줄이 사라지지 않게) — 놓으면 한 번에 반영 */
+let drag = null;
+function render() {
+  if (drag) { drag.dirty = true; return; }
+  if (raf) return;
+  raf = requestAnimationFrame(() => { raf = 0; if (drag) { drag.dirty = true; return; } draw(); });
+}
 function draw() {
   D = derive();
   const f = captureFocus();
@@ -1269,7 +1334,7 @@ function draw() {
   $('#gear').setAttribute('aria-current', S.ui.tab === 'set' ? 'page' : 'false');
   const views = { today: viewToday, cal: viewCal, rt: viewRt, rec: viewRec, proj: viewProj, set: viewSet, auth: viewAuth, err: viewErr };
   for (const k of Object.keys(views)) { const el = $('#v-' + k), on = k === v; el.hidden = !on; if (on) el.innerHTML = views[k](); else if (el.firstChild) el.innerHTML = ''; }
-  $('#fab').hidden = !canWrite() || v === 'set';
+  $('#fab').hidden = !canWrite() || v === 'set' || (v === 'proj' && S.ui.pjSort && !S.ui.proj);
   drawSync();
   restoreFocus(f);
 }
@@ -1338,6 +1403,7 @@ function makeLocalStore() {
     async delMonthItems(ym, field, ids) { const m = data.months[ym]; if (!m || !m[field]) return; for (const id of ids) delete m[field][id]; write(); emit(); },
     async setDoc(col, id, body) { data[col][id] = clone(body); write(); emit(); },
     async updateDoc(col, id, patch) { if (!data[col][id]) throw { code: 'not-found' }; Object.assign(data[col][id], clone(patch)); write(); emit(); },
+    async patchMany(col, patches) { for (const [id, patch] of Object.entries(patches)) if (data[col][id]) Object.assign(data[col][id], clone(patch)); write(); emit(); },
     async deleteDoc(col, id) { delete data[col][id]; write(); emit(); },
     async exportAll() { return clone(data); },
     async importAll(d) { mergeInto(data, d); write(); emit(); }
@@ -1356,6 +1422,12 @@ function makeCloudStore(fb, userId) {
     delMonthItems(ym, field, ids) { const p = {}; for (const id of ids) p[id] = F.deleteField(); return F.setDoc(ref('months', ym), { ym, [field]: p }, { merge: true }); },
     setDoc: (c, id, body) => F.setDoc(ref(c, id), body),
     updateDoc: (c, id, patch) => F.updateDoc(ref(c, id), patch),
+    /* 여러 문서를 한 번에(같이 성공하거나 같이 실패) — 순서 바꾸기에 사용 */
+    patchMany(c, patches) {
+      const ids = Object.keys(patches), commits = [];
+      for (let i = 0; i < ids.length; i += 400) { const bt = F.writeBatch(db); ids.slice(i, i + 400).forEach(id => bt.update(ref(c, id), patches[id])); commits.push(bt.commit()); }
+      return Promise.all(commits);
+    },
     deleteDoc: (c, id) => F.deleteDoc(ref(c, id)),
     async exportAll() {
       const out = EMPTY_DATA();
@@ -1452,7 +1524,7 @@ function writeFail(e) {
 const EV_KEYS = ['title', 'kind', 'date', 'time', 'place', 'memo', 'done', 'projectId', 'createdAt', 'updatedAt'];
 const LOG_KEYS = ['trackerId', 'date', 'qty', 'pay', 'memo', 'createdAt'];
 const TR_KEYS = ['name', 'unit', 'rate', 'goal', 'color', 'mark', 'order', 'createdAt'];
-const PJ_KEYS = ['name', 'status', 'start', 'due', 'color', 'memo', 'tasks', 'notes', 'createdAt', 'updatedAt'];
+const PJ_KEYS = ['name', 'status', 'start', 'due', 'color', 'memo', 'tasks', 'notes', 'order', 'createdAt', 'updatedAt'];
 const pick = (o, keys) => { const r = {}; for (const k of keys) r[k] = o[k] ?? ''; return r; };
 
 function putItem(field, keys, prev, item) {
@@ -1493,7 +1565,7 @@ function dropTracker(tr) {
 }
 function createProject(p) {
   if (!S.store) return false;
-  if (!pjById(p.id)) S.projects.push(p);
+  if (!pjById(p.id)) { S.projects.push(p); S.projects.sort(pjCmp); }
   render();
   track(S.store.setDoc('projects', p.id, pick(p, PJ_KEYS)));
   return true;
@@ -1502,9 +1574,36 @@ function patchProject(p, patch) {
   if (!S.store) return false;
   const now = Date.now();
   Object.assign(p, patch, { updatedAt: now });
+  if ('order' in patch) S.projects.sort(pjCmp);
   render();
   track(S.store.updateDoc('projects', p.id, { ...patch, updatedAt: now }));
   return true;
+}
+/* 한 묶음(진행 중·준비 중…)의 새 순서(ids)를 저장. 처음 바꿀 때 모든 프로젝트에 1,2,3… 번호를 매기고,
+   그 뒤로는 번호가 바뀐 프로젝트만 한 번에 저장 */
+function reorderGroup(status, ids) {
+  if (!S.store) return false;
+  const seq = [];
+  for (const [s] of PJ_GROUPS) {
+    let arr = pjOf(s);
+    if (s === status) { const want = ids.map(pjById).filter(p => p && p.status === s); arr = [...want, ...arr.filter(p => !want.includes(p))]; }
+    seq.push(...arr);
+  }
+  const patches = {};
+  seq.forEach((p, i) => { if (p.order !== i + 1) { p.order = i + 1; patches[p.id] = { order: i + 1 }; } });
+  if (!Object.keys(patches).length) return false;
+  S.projects.sort(pjCmp);
+  render();
+  track(S.store.patchMany('projects', patches));
+  return true;
+}
+function moveProject(id, dir) {
+  const p = pjById(id); if (!p) return false;
+  const ids = pjOf(p.status).map(x => x.id), i = ids.indexOf(id), j = i + dir;
+  if (i < 0 || j < 0 || j >= ids.length) return false;
+  ids.splice(i, 1); ids.splice(j, 0, id);
+  S.ui.pjMoved = { id, t: Date.now() };
+  return reorderGroup(p.status, ids);
 }
 function dropProject(p) {
   if (!S.store) return false;
@@ -1547,7 +1646,8 @@ function quickLog(tid) {
 const STATUS_NOTE = (from, to) => to === 'active' ? (from === 'plan' ? '시작' : from === 'hold' ? '다시 진행' : '다시 열기') : to === 'hold' ? '보류' : to === 'done' ? '완료' : '준비로 되돌림';
 function setStatus(p, s) {
   if (p.status === s) return;
-  const t = today(), from = p.status, patch = { status: s, notes: [...p.notes, { id: uid('n'), date: t, text: STATUS_NOTE(from, s), kind: 'status' }] };
+  /* 상태가 바뀌면 새 묶음의 맨 아래로 (그 묶음에서 정해 둔 순서는 그대로) */
+  const t = today(), from = p.status, patch = { status: s, order: pjNextOrder(), notes: [...p.notes, { id: uid('n'), date: t, text: STATUS_NOTE(from, s), kind: 'status' }] };
   if (s === 'active' && from === 'plan' && (!p.start || p.start > t)) patch.start = t;
   if (patchProject(p, patch)) toast(s === 'active' ? (from === 'plan' ? `${p.name}을(를) 시작했어요.` : '다시 진행해요.') : s === 'hold' ? '보류해 두었어요.' : s === 'done' ? '완료로 표시했어요.' : '상태를 바꿨어요.');
 }
@@ -1939,13 +2039,13 @@ const forms = {
     closeSheet();
     if (prev) {
       const patch = { name: name.slice(0, 60), status, start, due, color, memo };
-      if (prev.status !== status) patch.notes = [...prev.notes, { id: uid('n'), date: today(), text: STATUS_NOTE(prev.status, status), kind: 'status' }];
+      if (prev.status !== status) { patch.notes = [...prev.notes, { id: uid('n'), date: today(), text: STATUS_NOTE(prev.status, status), kind: 'status' }]; patch.order = pjNextOrder(); }
       if (patchProject(prev, patch)) toast('프로젝트를 고쳤어요.');
       return;
     }
     const steps = String(fd.get('steps') || '').split('\n').map(s => s.trim()).filter(Boolean).slice(0, 60).map(text => ({ id: uid('k'), text: text.slice(0, 120), done: false, due: '', doneAt: '' }));
     const p = { id: sh.id, name: name.slice(0, 60), status, start, due, color, memo, tasks: steps,
-      notes: status === 'active' ? [{ id: uid('n'), date: today(), text: '시작', kind: 'status' }] : [], createdAt: now, updatedAt: now };
+      notes: status === 'active' ? [{ id: uid('n'), date: today(), text: '시작', kind: 'status' }] : [], order: pjNextOrder(), createdAt: now, updatedAt: now };
     if (createProject(p)) { openProject(p.id); toast('프로젝트를 만들었어요. 단계를 추가해 보세요.'); }
   },
   routine(f) {
@@ -2037,6 +2137,7 @@ function afterNav() { render(); window.scrollTo({ top: 0 }); }
 function goTab(tab) {
   const cur = hs();
   if (tab === S.ui.tab && !S.ui.proj) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  S.ui.pjSort = false;
   if (tab === 'today') {
     if (cur.d > 0) { history.go(-cur.d); return; }
     S.ui.tab = 'today'; S.ui.proj = null; hReplace({ tab: 'today', proj: null, d: 0 }); afterNav(); return;
@@ -2049,16 +2150,32 @@ function goTab(tab) {
 function openProject(id) {
   const cur = hs();
   if (S.ui.proj !== id) S.ui.drafts = {};
-  S.ui.tab = 'proj'; S.ui.proj = id;
+  S.ui.tab = 'proj'; S.ui.proj = id; S.ui.pjSort = false;
   hPush({ tab: 'proj', proj: id, d: Math.min(cur.d + 1, 2) });
   afterNav();
+}
+/* 순서 바꾸기 모드도 기록에 남겨서, 폰의 뒤로 버튼을 누르면 모드만 끝나도록 */
+function startSort() {
+  if (S.ui.pjSort) return;
+  const cur = hs();
+  S.ui.pjSort = true;
+  hPush({ tab: 'proj', proj: null, d: Math.min(cur.d + 1, 2), sort: 1 });
+  render();
+}
+function endSort() {
+  if (!S.ui.pjSort) return;
+  const st = history.state;
+  if (st && st.sort) history.back();
+  else { S.ui.pjSort = false; render(); }
 }
 window.addEventListener('popstate', e => {
   const st = e.state && typeof e.state.d === 'number' ? e.state : { tab: 'today', proj: null, d: 0 };
   if (dlg.open) closeSheet();
-  if (afterPop) { const a = afterPop; afterPop = null; S.ui.tab = a.tab; S.ui.proj = a.proj; hReplace({ tab: a.tab, proj: a.proj, d: st.d }); }
-  else { S.ui.tab = TABS.includes(st.tab) ? st.tab : 'today'; S.ui.proj = st.proj || null; }
-  afterNav();
+  const was = S.ui.tab + '|' + S.ui.proj;
+  if (afterPop) { const a = afterPop; afterPop = null; S.ui.tab = a.tab; S.ui.proj = a.proj; S.ui.pjSort = false; hReplace({ tab: a.tab, proj: a.proj, d: st.d }); }
+  else { S.ui.tab = TABS.includes(st.tab) ? st.tab : 'today'; S.ui.proj = st.proj || null; S.ui.pjSort = !!st.sort && S.ui.tab === 'proj' && !S.ui.proj; }
+  if (S.ui.tab + '|' + S.ui.proj === was) render(); /* 같은 화면에서 모드만 바뀜 → 스크롤 위치 유지 */
+  else afterNav();
 });
 window.addEventListener('hashchange', () => {
   const h = (location.hash || '').slice(1);
@@ -2127,6 +2244,20 @@ const acts = {
   'proj-back'() { const st = hs(); if (st.proj && st.d > 0) history.back(); else { S.ui.proj = null; hReplace({ tab: 'proj', proj: null, d: st.d }); afterNav(); } },
   'edit-project'(el) { const p = pjById(el.dataset.id); if (p && guard()) sheetProject(p); },
   'proj-status'(el) { const p = pjById(el.dataset.id); if (p && guard()) setStatus(p, el.dataset.s); },
+  'pj-sort'() { if (guard()) startSort(); },
+  'pj-sort-done'() { endSort(); },
+  'pj-move'(el) {
+    if (!guard()) return;
+    const id = el.dataset.id, dir = Number(el.dataset.dir);
+    if (!moveProject(id, dir)) return;
+    /* 맨 위·맨 아래에 닿아 그 버튼이 꺼지면 반대쪽 버튼으로 포커스 옮기기 (키보드 사용 시) */
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const a = document.activeElement; if (a && a !== document.body) return;
+      const same = document.getElementById((dir < 0 ? 'mv-u-' : 'mv-d-') + id), other = document.getElementById((dir < 0 ? 'mv-d-' : 'mv-u-') + id);
+      const t = same && !same.disabled ? same : other;
+      if (t && !t.disabled) t.focus({ preventScroll: true });
+    }));
+  },
   'open-task'(el) { const p = pjById(el.dataset.pid); const tk = p && p.tasks.find(t => t.id === el.dataset.tid); if (tk && guard()) sheetTask(p, tk); },
   'del-note'(el) {
     const p = pjById(el.dataset.pid); if (!p || !guard()) return;
@@ -2214,8 +2345,89 @@ document.addEventListener('submit', e => {
 document.addEventListener('toggle', e => {
   const d = e.target;
   if (!d.matches || !d.matches('details[data-tog]')) return;
-  if (d.dataset.tog === 'done') S.ui.doneOpen = d.open; else if (d.dataset.tog === 'rt-off') S.ui.rtOffOpen = d.open; else S.ui.openLogs[d.dataset.tog] = d.open;
+  const k = d.dataset.tog;
+  if (k.startsWith('pj-')) { const s = k.slice(3); if (s in P.pjOpen && P.pjOpen[s] !== d.open) { P.pjOpen[s] = d.open; savePrefs(); } }
+  else if (k === 'rt-off') S.ui.rtOffOpen = d.open; else S.ui.openLogs[k] = d.open;
 }, true);
+
+/* ----- 끌어서 순서 바꾸기 (손잡이를 잡고 위아래로) ----- */
+function dragMove() {
+  const d = drag, sy = window.scrollY, me = d.boxes[d.from];
+  const first = d.boxes[0], last = d.boxes[d.boxes.length - 1];
+  const dy = Math.max(first.top - me.top, Math.min(last.top + last.h - (me.top + me.h), d.y + sy - d.startY));
+  d.row.style.transform = `translateY(${dy}px)`;
+  /* 위로 끌 때는 줄의 윗변이, 아래로 끌 때는 아랫변이 이웃 줄의 가운데를 넘으면 자리를 바꿈 */
+  const top = me.top + dy, bot = top + me.h;
+  let to = d.from;
+  for (let i = d.from - 1; i >= 0; i--) { const b = d.boxes[i]; if (top < b.top + b.h / 2) to = i; else break; }
+  for (let i = d.from + 1; i < d.boxes.length; i++) { const b = d.boxes[i]; if (bot > b.top + b.h / 2) to = i; else break; }
+  if (to === d.to) return;
+  d.to = to;
+  d.rows.forEach((r, i) => {
+    if (i === d.from) return;
+    const s = d.from < to && i > d.from && i <= to ? -me.h : d.from > to && i >= to && i < d.from ? me.h : 0;
+    r.style.transform = s ? `translateY(${s}px)` : '';
+  });
+  buzz();
+}
+/* 손가락이 화면 위·아래 가장자리에 가면 저절로 스크롤 (조금이라도 끈 뒤부터) */
+function dragTick() {
+  const d = drag; if (!d) return;
+  const zone = 64, y = d.y;
+  if (!d.moved && Math.abs(y - d.y0) > 8) d.moved = true;
+  let v = 0;
+  if (d.moved && y < d.topLim + zone) v = -Math.min(16, Math.ceil((d.topLim + zone - y) / 4));
+  else if (d.moved && y > d.botLim - zone) v = Math.min(16, Math.ceil((y - (d.botLim - zone)) / 4));
+  if (v) { const before = window.scrollY; window.scrollBy(0, v); if (window.scrollY !== before) dragMove(); }
+  d.raf = requestAnimationFrame(dragTick);
+}
+function dragEnd(e, cancel) {
+  const d = drag;
+  if (!d || (e && e.pointerId !== d.pid)) return;
+  drag = null;
+  cancelAnimationFrame(d.raf);
+  try { d.grip.releasePointerCapture(d.pid); } catch (x) { /* 이미 놓음 */ }
+  d.list.classList.remove('dragging');
+  if (!cancel && d.to !== d.from && canWrite()) {
+    const ids = d.rows.map(r => r.dataset.id);
+    ids.splice(d.from, 1); ids.splice(d.to, 0, d.id);
+    S.ui.pjMoved = { id: d.id, t: Date.now() };
+    if (reorderGroup(d.status, ids)) return; /* 새 순서로 다시 그려짐 */
+  }
+  d.rows.forEach(r => { r.style.transform = ''; });
+  d.row.classList.remove('lift');
+  if (d.dirty) render();
+}
+document.addEventListener('pointerdown', e => {
+  const grip = e.target.closest && e.target.closest('.grip');
+  if (!grip || drag || grip.classList.contains('off') || (e.pointerType === 'mouse' && e.button !== 0) || !canWrite()) return;
+  const row = grip.closest('.srow'), list = row && row.parentElement;
+  if (!row || !list || !list.dataset.grp) return;
+  e.preventDefault();
+  const rows = [...list.children], sy = window.scrollY;
+  const top = $('.top'), tabs = $('.tabs');
+  const tabsFixed = tabs && getComputedStyle(tabs).position === 'fixed';
+  drag = {
+    id: row.dataset.id, status: list.dataset.grp, list, row, grip, rows, pid: e.pointerId,
+    boxes: rows.map(r => { const b = r.getBoundingClientRect(); return { top: b.top + sy, h: b.height }; }),
+    from: rows.indexOf(row), to: rows.indexOf(row), startY: e.clientY + sy, y: e.clientY, y0: e.clientY, moved: false, dirty: false, raf: 0,
+    topLim: top ? Math.max(0, top.getBoundingClientRect().bottom) : 0,
+    botLim: tabsFixed ? tabs.getBoundingClientRect().top : window.innerHeight
+  };
+  try { grip.setPointerCapture(e.pointerId); } catch (x) { /* 무시 */ }
+  row.classList.add('lift'); list.classList.add('dragging');
+  buzz();
+  drag.raf = requestAnimationFrame(dragTick);
+});
+document.addEventListener('pointermove', e => {
+  if (!drag || e.pointerId !== drag.pid) return;
+  e.preventDefault();
+  drag.y = e.clientY;
+  dragMove();
+}, { passive: false });
+document.addEventListener('pointerup', e => dragEnd(e, false));
+document.addEventListener('pointercancel', e => dragEnd(e, true));
+window.addEventListener('blur', () => { if (drag) dragEnd(null, true); });
 document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
 window.addEventListener('online', drawSync);
 window.addEventListener('offline', drawSync);
@@ -2234,7 +2446,7 @@ function registerSW() {
 }
 function boot() {
   const st = history.state;
-  if (st && typeof st.d === 'number' && !h0) { S.ui.tab = TABS.includes(st.tab) ? st.tab : 'today'; S.ui.proj = st.proj || null; }
+  if (st && typeof st.d === 'number' && !h0) { S.ui.tab = TABS.includes(st.tab) ? st.tab : 'today'; S.ui.proj = st.proj || null; S.ui.pjSort = !!st.sort && S.ui.tab === 'proj' && !S.ui.proj; }
   else hReplace({ tab: S.ui.tab, proj: null, d: 0 }, location.pathname + location.search);
   registerSW();
   if (CFG && P.mode !== 'local') startFirebase();
