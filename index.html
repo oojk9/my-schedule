@@ -430,6 +430,37 @@ body.gated main{padding-block:8px calc(40px + env(safe-area-inset-bottom,0px))}
 .up-item .dot.ring{background:none;border:2px solid var(--c)}
 .chip.rt::before{content:"↻";margin-right:3px;font-weight:700;color:var(--c)}
 .legend .lg-rt::before{content:"↻";margin-right:4px;font-weight:700}
+.row-sub .yr{font-weight:700;color:var(--ink)}
+.rt-preview .dd{margin-left:2px}
+
+/* ---------- 미리 알림 ---------- */
+.bell-ic svg,.rm-tag svg{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.bell-ic{display:inline-flex;color:var(--pine)}
+.bell-ic svg{width:16px;height:16px}
+.lab .bell-ic{vertical-align:-3px;margin-right:4px}
+.rm-tag{display:inline-flex;align-items:center;gap:3px;color:var(--ink-2);white-space:nowrap}
+.rm-tag svg{width:12px;height:12px}
+.rem-sec .rows{border-color:var(--pine);box-shadow:0 0 0 1px var(--pine) inset,var(--shadow)}
+.row.rem .row-btn{grid-template-columns:62px minmax(0,1fr)}
+.rem-dd{font:400 21px/1 var(--f-display)!important;color:var(--pine)!important;font-variant-numeric:tabular-nums;margin-bottom:2px}
+.rem-x{margin-right:8px;width:36px;height:36px}
+.rem-x svg{width:15px;height:15px}
+.rchips{display:flex;flex-wrap:wrap;gap:6px}
+.rchip,.mchips label{position:relative;display:block}
+.rchip input,.mchips input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.rchip span,.mchips span{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:5px 11px;border:1px solid var(--rule);border-radius:999px;font-size:13.5px;font-weight:600;background:var(--sheet);cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rchip input:checked+span,.mchips input:checked+span{background:var(--pine);border-color:var(--pine);color:var(--on-pine)}
+.rchip input:focus-visible+span,.mchips input:focus-visible+span{outline:2px solid var(--pine);outline-offset:2px}
+.mchips{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.mchips span{display:flex;padding:5px 0;border-radius:10px}
+.rm-add{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rm-add .lab{margin-right:2px}
+.sheet .rem-field .rm-add input:not([type="checkbox"]){width:84px;flex:none;min-height:38px;padding:6px 10px;text-align:center}
+.sheet .rem-field .rm-add select{width:auto;flex:none;min-height:38px;padding:6px 8px}
+.rm-prev{font-size:13px;color:var(--ink-2);line-height:1.6}
+.rm-prev:empty{display:none}
+.rm-prev b{color:var(--ink)}
+.rm-prev .past{color:var(--ink-3)}
 
 /* ---------- settings & login ---------- */
 .set-list{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start}
@@ -544,7 +575,7 @@ body.gated .toast{bottom:calc(28px + env(safe-area-inset-bottom,0px))}
   <div id="banner"></div>
   <section class="view" id="v-today" aria-label="오늘"></section>
   <section class="view" id="v-cal" aria-label="달력" hidden></section>
-  <section class="view" id="v-rt" aria-label="매달 루틴" hidden></section>
+  <section class="view" id="v-rt" aria-label="루틴" hidden></section>
   <section class="view" id="v-rec" aria-label="근무·횟수 기록" hidden></section>
   <section class="view" id="v-proj" aria-label="프로젝트" hidden></section>
   <section class="view" id="v-set" aria-label="설정" hidden></section>
@@ -563,7 +594,7 @@ body.gated .toast{bottom:calc(28px + env(safe-area-inset-bottom,0px))}
 (() => {
 'use strict';
 
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.3.0';
 const FB_VER = '12.11.0';
 const LS_DATA = 'ilsu.data.v1';
 const LS_PREFS = 'ilsu.prefs.v1';
@@ -608,16 +639,43 @@ const STATUS = { active: '진행 중', plan: '준비', hold: '보류', done: '�
 const EMPTY_TOT = { qty: 0, pay: 0, days: new Set() };
 const TABS = ['today', 'cal', 'rt', 'rec', 'proj', 'set'];
 
-/* 매달 루틴 */
+/* 루틴 (매달·매년) */
 const RT_KINDS = { pay: { label: '결제·납부', color: 'rose' }, save: { label: '저축·적금', color: 'blue' }, income: { label: '들어오는 돈', color: 'pine' }, etc: { label: '기타', color: 'amber' } };
 const RT_SHIFT = { none: '그 날 그대로', next: '다음 평일로 미루기', prev: '앞 평일로 당기기' };
 const RT_TEMPLATES = {
   card: { title: '카드 결제일', kind: 'pay', day: 15, shift: 'next' },
   saving: { title: '적금 자동이체', kind: 'save', day: 25, shift: 'next' },
   salary: { title: '월급날', kind: 'income', day: 10, shift: 'prev' },
-  bill: { title: '관리비 납부', kind: 'pay', day: 'last', shift: 'next' }
+  bill: { title: '관리비 납부', kind: 'pay', day: 'last', shift: 'next' },
+  cartax: { title: '자동차세', kind: 'pay', freq: 'y', months: [6, 12], day: 'last', shift: 'next', remind: ['7d'] },
+  carins: { title: '자동차보험 갱신', kind: 'pay', freq: 'y', shift: 'none', remind: ['1m', '7d'] }
 };
-const RT_KEYS = ['title', 'kind', 'day', 'amount', 'shift', 'start', 'end', 'memo', 'active', 'done', 'order', 'createdAt', 'updatedAt'];
+const RT_KEYS = ['title', 'kind', 'freq', 'months', 'day', 'amount', 'shift', 'start', 'end', 'memo', 'active', 'remind', 'done', 'order', 'createdAt', 'updatedAt'];
+
+/* 미리 알림: '0d' 당일 · '7d' D-7(7일 전) · '3m' 3개월 전 */
+const LEAD_RE = /^(\d{1,3})([dm])$/;
+const REM_PRESETS = ['0d', '1d', '3d', '7d', '14d', '1m', '2m', '3m', '6m'];
+const leadDays = l => { const m = LEAD_RE.exec(l); return m ? (m[2] === 'm' ? +m[1] * 30.44 : +m[1]) : 0; };
+const leadLabel = l => { const m = LEAD_RE.exec(l); if (!m) return ''; const n = +m[1]; return n === 0 ? '당일' : m[2] === 'm' ? `${n}개월 전` : `D-${n}`; };
+/* 문장용: '10일 전', '3개월 전', '당일' */
+const leadLong = l => { const m = LEAD_RE.exec(l); if (!m) return ''; const n = +m[1]; return n === 0 ? '당일' : `${n}${m[2] === 'm' ? '개월' : '일'} 전`; };
+/* 먼저 울리는 것부터 (3개월 전 → D-7 → 당일) */
+const byFirst = list => list.slice().sort((a, b) => leadDays(b) - leadDays(a));
+/* mode: 'm' 매달 루틴(27일 전까지만) · 'y' 매년 루틴 · 'e' 일정 */
+function remOK(l, mode) { const m = LEAD_RE.exec(l); if (!m) return false; const n = +m[1]; if (m[2] === 'd') return n <= (mode === 'm' ? 27 : 365); return mode !== 'm' && n >= 1 && n <= 12; }
+function normRemind(x, mode) {
+  if (!Array.isArray(x)) return [];
+  const out = new Set();
+  for (const v of x) { const m = typeof v === 'string' && LEAD_RE.exec(v.trim()); if (!m) continue; const l = `${+m[1]}${m[2]}`; if (remOK(l, mode)) out.add(l); }
+  return [...out].sort((a, b) => leadDays(a) - leadDays(b)).slice(0, 8);
+}
+/* 같은 날짜의 N개월 전 (그 달에 없는 날은 말일로: 5월 31일의 3개월 전 → 2월 28일) */
+function addMonthsDate(s, n) { const [y, m, d] = s.split('-').map(Number); const t = new Date(y, m - 1 + n, 1); const dim = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate(); return `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(Math.min(d, dim))}`; }
+const fireDate = (occ, l) => { const m = LEAD_RE.exec(l); return !m ? occ : m[2] === 'm' ? addMonthsDate(occ, -m[1]) : addDays(occ, -m[1]); };
+function normMonths(x, fallback) {
+  const out = Array.isArray(x) ? [...new Set(x.map(Number).filter(n => Number.isInteger(n) && n >= 1 && n <= 12))].sort((a, b) => a - b) : [];
+  return out.length ? out : [fallback];
+}
 
 /* 공휴일: 2026·2027년 (대체공휴일·선거일 포함) */
 const HOL = {
@@ -650,7 +708,8 @@ const ICON = {
   check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
   up: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14.5l6-6 6 6"/></svg>',
   down: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>',
-  grip: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>'
+  grip: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 2H4.4z"/><path d="M9.8 20.5a2.3 2.3 0 0 0 4.4 0"/></svg>'
 };
 
 const curY = () => new Date().getFullYear();
@@ -670,6 +729,9 @@ const P = Object.assign({ layers: { ev: true, rt: true, log: true, proj: true },
 P.layers = Object.assign({ ev: true, rt: true, log: true, proj: true }, P.layers || {});
 /* 프로젝트 묶음 펼침 상태 (이 기기에만 기억) */
 P.pjOpen = Object.assign({ active: true, plan: true, hold: true, done: false }, objOr(P.pjOpen));
+/* 미리 알림: 이 기기에서 폰 알림 받기, 오늘 화면에서 닫은 알림 */
+P.notify = P.notify === true;
+P.remSeen = objOr(P.remSeen);
 function savePrefs() { try { localStorage.setItem(LS_PREFS, JSON.stringify(P)); } catch (e) { /* 저장 안 돼도 괜찮음 */ } }
 
 /* config.js 에 붙여 넣은 Firebase 설정 읽기 (앞뒤에 다른 줄이 있어도 괜찮음) */
@@ -699,6 +761,7 @@ const S = {
   loaded: { trackers: false, projects: false, routines: false, months: false },
   range: { from: addMonths(ymOf(T0), -11), to: addMonths(ymOf(T0), 12) },
   sheet: null,
+  notif: { bg: '' }, /* 앱이 꺼져 있을 때 알림: '' 확인 전 · on · no-install · unsupported */
   ui: {
     tab: TABS.includes(h0) ? h0 : 'today', calYm: ymOf(T0), sel: T0, recYm: ymOf(T0), rtYm: ymOf(T0),
     layers: P.layers, proj: null, pjSort: false, pjMoved: null, rtOffOpen: false, openLogs: {}, drafts: {}, press: null
@@ -730,7 +793,7 @@ const pjNextOrder = () => S.projects.reduce((a, p) => Math.max(a, p.order), 0) +
 function normEvent(id, r, ym) {
   return { id, ym, title: str(r.title, 80).trim() || '(제목 없음)', kind: KINDS[r.kind] ? r.kind : 'etc',
     date: isDate(r.date) ? r.date : ym + '-01', time: isTime(r.time) ? r.time : '', place: str(r.place, 60), memo: str(r.memo, 400),
-    done: !!r.done, projectId: str(r.projectId, 60), createdAt: num(r.createdAt), updatedAt: num(r.updatedAt) };
+    done: !!r.done, projectId: str(r.projectId, 60), remind: normRemind(r.remind, 'e'), createdAt: num(r.createdAt), updatedAt: num(r.updatedAt) };
 }
 function normLog(id, r, ym) {
   return { id, ym, trackerId: str(r.trackerId, 60), date: isDate(r.date) ? r.date : ym + '-01', qty: num(r.qty) > 0 ? num(r.qty) : 1,
@@ -746,10 +809,14 @@ function parseMonth(ym, r) {
 function sanitizeDone(x) { const o = {}; for (const [k, v] of Object.entries(objOr(x))) if (/^\d{4}-\d{2}$/.test(k) && v) o[k] = isDate(v) ? v : true; return o; }
 function normRoutine(id, r) {
   const day = r.day === 'last' ? 'last' : Math.min(31, Math.max(1, Math.round(num(r.day)) || 1));
-  return { id, title: str(r.title, 60).trim() || '이름 없는 루틴', kind: RT_KINDS[r.kind] ? r.kind : 'etc', day,
+  const start = /^\d{4}-\d{2}$/.test(r.start) ? r.start : '';
+  /* freq: 'm' 매달(예전 루틴은 모두 매달) · 'y' 매년 — months: 매년 돌아오는 달(여러 개 가능, 예: 자동차세 6·12월) */
+  const freq = r.freq === 'y' ? 'y' : 'm';
+  return { id, title: str(r.title, 60).trim() || '이름 없는 루틴', kind: RT_KINDS[r.kind] ? r.kind : 'etc', freq,
+    months: freq === 'y' ? normMonths(r.months, start ? +start.slice(5) : 1) : [], day,
     amount: Math.max(0, Math.round(num(r.amount))), shift: RT_SHIFT[r.shift] ? r.shift : 'none',
-    start: /^\d{4}-\d{2}$/.test(r.start) ? r.start : '', end: /^\d{4}-\d{2}$/.test(r.end) ? r.end : '',
-    memo: str(r.memo, 200), active: r.active !== false, done: sanitizeDone(r.done),
+    start, end: /^\d{4}-\d{2}$/.test(r.end) ? r.end : '',
+    memo: str(r.memo, 200), active: r.active !== false, remind: normRemind(r.remind, freq), done: sanitizeDone(r.done),
     order: num(r.order), createdAt: num(r.createdAt), updatedAt: num(r.updatedAt) };
 }
 function rebuildRoutines() { S.routines = [...RAW.routines].map(([id, r]) => normRoutine(id, objOr(r))).sort((a, b) => a.order - b.order || a.createdAt - b.createdAt); }
@@ -764,15 +831,63 @@ const rtById = id => S.routines.find(r => r.id === id);
 /* 루틴이 그 달에 실제로 돌아오는 날 (짧은 달은 말일로, 주말·공휴일은 설정대로 미루거나 당김) */
 const isOff = d => { const w = pd(d).getDay(); return w === 0 || w === 6 || !!HOL[d]; };
 const dayLabel = r => r.day === 'last' ? '말일' : `${r.day}일`;
+const monthsLabel = r => `${r.months.join('·')}월`;
+/* "매달 15일" · "매년 3월 15일" · "매년 6·12월 말일" */
+const rtWhen = r => r.freq === 'y' ? `매년 ${monthsLabel(r)} ${dayLabel(r)}` : `매달 ${dayLabel(r)}`;
 function routineOcc(r, ym) {
   if (!r.active) return null;
   if (r.start && ym < r.start) return null;
   if (r.end && ym > r.end) return null;
+  if (r.freq === 'y' && !r.months.includes(+ym.slice(5))) return null;
   const [y, m] = ym.split('-').map(Number), dim = new Date(y, m, 0).getDate();
   const base = `${ym}-${pad(r.day === 'last' ? dim : Math.min(r.day, dim))}`;
   let date = base;
   if (r.shift === 'next' || r.shift === 'prev') { const step = r.shift === 'next' ? 1 : -1; for (let i = 0; i < 14 && isOff(date); i++) date = addDays(date, step); }
   return { r, ym, date, base, shifted: date !== base, done: !!r.done[ym] };
+}
+/* 오늘(from) 이후 아직 확인하지 않은 가장 가까운 날 */
+function nextOcc(r, from) {
+  for (let i = 0, ym = addMonths(ymOf(from), -1); i < 27; i++, ym = addMonths(ym, 1)) { const o = routineOcc(r, ym); if (o && o.date >= from && !o.done) return o; }
+  return null;
+}
+
+/* ----- 미리 알림 계산: 알림이 울리는 날(fire)이 from~to 사이인 것 -----
+   k: 알림 하나(같은 날 두 번 안 울리게) · g: 같은 일정/같은 달 루틴 묶음 */
+function remindersBetween(from, to) {
+  const out = [];
+  const last = addMonths(ymOf(to), 13);
+  for (const r of S.routines) {
+    if (!r.active || !r.remind.length) continue;
+    for (let ym = addMonths(ymOf(from), -1); ym <= last; ym = addMonths(ym, 1)) {
+      const o = routineOcc(r, ym);
+      if (!o || o.done || o.date < from) continue;
+      for (const l of r.remind) {
+        const f = fireDate(o.date, l);
+        if (f >= from && f <= to) out.push({ k: `r|${r.id}|${o.date}|${l}`, g: `r|${r.id}|${o.date}`, kind: 'rt', id: r.id, ym: o.ym, occ: o.date, fire: f, lead: l, title: r.title, amount: r.amount, time: '', c: RT_KINDS[r.kind].color, yearly: r.freq === 'y' });
+      }
+    }
+  }
+  if (D) for (const [d, arr] of D.evByDate) {
+    if (d < from) continue;
+    for (const e of arr) {
+      if (e.done || !e.remind.length) continue;
+      for (const l of e.remind) {
+        const f = fireDate(d, l);
+        if (f >= from && f <= to) out.push({ k: `e|${e.id}|${d}|${l}`, g: `e|${e.id}|${d}`, kind: 'ev', id: e.id, ym: e.ym, occ: d, fire: f, lead: l, title: e.title, amount: 0, time: e.time, c: KINDS[e.kind].color, yearly: false });
+      }
+    }
+  }
+  return out.sort((a, b) => a.fire < b.fire ? -1 : a.fire > b.fire ? 1 : a.occ < b.occ ? -1 : a.occ > b.occ ? 1 : 0);
+}
+/* 같은 일정에 여러 알림이 울렸으면 가장 최근 것 하나만 */
+function latestPerGroup(list) {
+  const m = new Map();
+  for (const x of list) { const b = m.get(x.g); if (!b || x.fire > b.fire) m.set(x.g, x); }
+  return [...m.values()].sort((a, b) => a.occ < b.occ ? -1 : a.occ > b.occ ? 1 : 0);
+}
+/* 오늘 화면의 '미리 알림': 최근 7일 안에 울렸고, 그 날이 아직 안 왔고, 닫지 않은 것 */
+function activeReminders(t) {
+  return latestPerGroup(remindersBetween(addDays(t, -6), t).filter(x => x.occ > t && !P.remSeen[x.k]));
 }
 function shortDate(d, ref) { const dt = pd(d); return `${ref && ymOf(ref) === ymOf(d) ? '' : (dt.getMonth() + 1) + '월 '}${dt.getDate()}일(${WD[dt.getDay()]})`; }
 function shiftNote(o) { return `${+o.base.slice(8)}일이 ${HOL[o.base] ? '공휴일' : '주말'}이라 ${shortDate(o.date, o.base)}로`; }
@@ -856,20 +971,23 @@ function trackerStarter(txt) {
 }
 function chk(kind, on, attrs, label) { return `<span class="check"><input type="checkbox" data-chg="${kind}" ${attrs}${on ? ' checked' : ''} aria-label="${esc(label)}"><span></span></span>`; }
 
+/* 줄 아래쪽에 붙는 '🔔 3개월 전·D-7' 표시 */
+const remTag = list => list && list.length ? `<span class="rm-tag" aria-label="미리 알림 ${byFirst(list).map(leadLong).join(', ')}">${ICON.bell}${byFirst(list).map(leadLabel).join('·')}</span>` : '';
+const rtTimeCol = r => r.freq === 'y' ? `<span class="row-time"><b>매년</b>${r.months.length > 2 ? r.months.length + '번' : monthsLabel(r)}</span>` : `<span class="row-time"><b>매달</b>${dayLabel(r)}</span>`;
 function rowHTML(it, opt = {}) {
   const lead = d => { const n = diff(today(), d), dt = pd(d); return `<span class="row-time"><b>${dt.getMonth() + 1}.${pad(dt.getDate())}</b>${WD[dt.getDay()]}요일<span class="dd${n < 0 && !opt.neutral ? ' late' : ''}">${dday(d)}</span></span>`; };
   if (it.k === 'rt') {
     const o = it.o, r = o.r, K = RT_KINDS[r.kind], dt = pd(o.date);
     const time = opt.rtView
       ? `<span class="row-time"><b>${ymOf(o.date) === o.ym ? dt.getDate() + '일' : (dt.getMonth() + 1) + '.' + pad(dt.getDate())}</b>${WD[dt.getDay()]}요일<span class="dd${!o.done && o.date < today() ? ' late' : ''}">${o.done ? '확인' : dday(o.date)}</span></span>`
-      : `<span class="row-time"><b>매달</b>${dayLabel(r)}</span>`;
-    const sub = [`<b class="kind">${K.label}</b>`, r.amount ? won(r.amount) : '', r.memo ? esc(r.memo) : '', o.shifted ? `<span class="shift">${shiftNote(o)}</span>` : ''].filter(Boolean).join(' · ');
+      : rtTimeCol(r);
+    const sub = [`<b class="kind">${K.label}</b>`, r.freq === 'y' ? '<span class="yr">매년</span>' : '', r.amount ? won(r.amount) : '', r.memo ? esc(r.memo) : '', o.shifted ? `<span class="shift">${shiftNote(o)}</span>` : '', remTag(r.remind)].filter(Boolean).join(' · ');
     return `<li class="row${o.done ? ' is-done' : ''}" style="--c:var(--c-${K.color})"><button type="button" class="row-btn" data-act="open-routine" data-id="${r.id}">${time}<span class="row-main"><span class="row-title"><span class="rt-ic">${ICON.repeat}</span>${esc(r.title)}</span><span class="row-sub">${sub}</span></span></button>${chk('rt', o.done, `data-id="${r.id}" data-ym="${o.ym}"`, `${r.title} ${+o.ym.slice(5)}월 확인`)}</li>`;
   }
   if (it.k === 'ev') {
     const e = it.e, K = KINDS[e.kind], p = e.projectId && D.pjMap.get(e.projectId);
     const time = opt.showDate ? lead(e.date) : `<span class="row-time">${e.time ? timeHTML(e.time) : '<b>종일</b>'}</span>`;
-    const sub = [`<b class="kind">${K.label}</b>`, opt.showDate && e.time ? fmtTime(e.time) : '', e.place ? esc(e.place) : '', p ? esc(p.name) : ''].filter(Boolean).join(' · ');
+    const sub = [`<b class="kind">${K.label}</b>`, opt.showDate && e.time ? fmtTime(e.time) : '', e.place ? esc(e.place) : '', p ? esc(p.name) : '', e.done ? '' : remTag(e.remind)].filter(Boolean).join(' · ');
     return `<li class="row${e.done ? ' is-done' : ''}" style="--c:var(--c-${K.color})"><button type="button" class="row-btn" data-act="open-event" data-id="${e.id}" data-ym="${e.ym}">${time}<span class="row-main"><span class="row-title">${esc(e.title)}</span><span class="row-sub">${sub}</span></span></button>${chk('ev', e.done, `data-id="${e.id}" data-ym="${e.ym}"`, `${e.title} 완료`)}</li>`;
   }
   if (it.k === 'task') {
@@ -905,6 +1023,7 @@ function viewToday() {
   const act = pjOf('active');
   return `${installBanner()}<div class="today-head"><p class="eyebrow">${d.getFullYear()}년 · 오늘</p><h1 class="today-date">${d.getMonth() + 1}월 ${d.getDate()}일<span>${WD[d.getDay()]}요일</span></h1>${hol ? `<span class="hol-tag">${esc(hol)}</span>` : ''}</div>
   <div class="today-grid"><div class="col">
+    ${remindHTML(t)}
     <section class="sec"><div class="sec-head"><h2>오늘 일정</h2>${canWrite() ? `<button type="button" class="btn ghost sm" data-act="new-event" data-date="${t}">${ICON.plus}일정</button>` : ''}</div>${listCard(dayItems(t), '오늘은 잡힌 일정이 없어요.')}</section>
     ${over.length ? `<section class="sec"><div class="sec-head"><h2>밀린 항목 <span class="count">${over.length}</span></h2></div>${listCard(over, '', { showDate: true })}</section>` : ''}
     <section class="sec"><div class="sec-head"><h2>다가오는 일정</h2><button type="button" class="btn ghost sm" data-act="tab" data-tab="cal">달력에서 보기</button></div>${upcomingHTML(t)}</section>
@@ -913,6 +1032,20 @@ function viewToday() {
     <section class="sec"><div class="sec-head"><h2>${d.getMonth() + 1}월 횟수</h2><button type="button" class="btn ghost sm" data-act="tab" data-tab="rec">자세히</button></div>${tilesHTML(ym)}</section>
     <section class="sec"><div class="sec-head"><h2>진행 중인 프로젝트</h2><button type="button" class="btn ghost sm" data-act="tab" data-tab="proj">전체 보기</button></div>${S.phase !== 'ready' ? loadingCard() : act.length ? `<div class="pj-list">${act.map(projCard).join('')}</div>` : emptyCard('진행 중인 프로젝트가 없어요. 단계가 있는 일을 프로젝트로 만들면 진행률을 한눈에 볼 수 있어요.', '새 프로젝트', 'new-project')}</section>
   </div></div>`;
+}
+/* 오늘 화면 맨 위 '미리 알림' — 예: D-92 자동차보험 갱신 (3개월 전 알림) */
+function remindHTML(t) {
+  if (S.phase !== 'ready') return '';
+  const items = activeReminders(t);
+  if (!items.length) return '';
+  const offer = !P.notify && notifPerm() !== 'unsupported' && canWrite();
+  return `<section class="sec rem-sec" aria-label="미리 알림"><div class="sec-head"><h2><span class="bell-ic">${ICON.bell}</span>미리 알림 <span class="count">${items.length}</span></h2>${offer ? '<button type="button" class="btn ghost sm" data-act="notify-on">폰 알림 켜기</button>' : ''}</div><ul class="card rows">${items.map(x => remRow(x, t)).join('')}</ul></section>`;
+}
+function remRow(x, t) {
+  const n = diff(t, x.occ);
+  const open = x.kind === 'rt' ? `data-act="open-routine" data-id="${x.id}"` : `data-act="open-event" data-id="${x.id}" data-ym="${x.ym}"`;
+  const sub = [`<b class="kind">${leadLong(x.lead)} 알림</b>`, fmtMD(x.occ) + (x.time ? ' ' + fmtTime(x.time) : ''), x.amount ? won(x.amount) : ''].filter(Boolean).join(' · ');
+  return `<li class="row rem" style="--c:var(--c-${x.c})"><button type="button" class="row-btn" ${open} aria-label="${esc(x.title)}, ${n}일 남음"><span class="row-time"><b class="rem-dd">D-${n}</b></span><span class="row-main"><span class="row-title">${x.kind === 'rt' ? `<span class="rt-ic">${ICON.repeat}</span>` : ''}${esc(x.title)}</span><span class="row-sub">${sub}</span></span></button><button type="button" class="icon-btn sm rem-x" data-act="rem-seen" data-g="${esc(x.g)}" aria-label="${esc(x.title)} 알림 닫기">${ICON.x}</button></li>`;
 }
 function upItem(it) {
   if (it.k === 'rt') { const r = it.o.r; return `<li><button type="button" class="up-item" data-act="open-routine" data-id="${r.id}" style="--c:var(--c-${RT_KINDS[r.kind].color})"><i class="dot ring"></i><span class="n">${esc(r.title)}</span>${r.amount ? `<span class="t">${won(r.amount)}</span>` : ''}</button></li>`; }
@@ -936,10 +1069,10 @@ function upcomingHTML(t) {
 }
 function rtMini(ym) {
   if (S.phase !== 'ready') return loadingCard();
-  if (!S.routines.length) return `<div class="card empty"><p>카드 결제일·적금 자동이체처럼 매달 돌아오는 일을 한 번만 적어 두면, 매달 알아서 달력과 오늘 화면에 보여 드려요.</p>${canWrite() ? `<button type="button" class="btn sm" data-act="tab" data-tab="rt">${ICON.plus}루틴 만들기</button>` : ''}</div>`;
+  if (!S.routines.length) return `<div class="card empty"><p>카드 결제일처럼 매달, 자동차보험 갱신처럼 매년 돌아오는 일을 한 번만 적어 두면 알아서 달력과 오늘 화면에 보여 드려요.</p>${canWrite() ? `<button type="button" class="btn sm" data-act="tab" data-tab="rt">${ICON.plus}루틴 만들기</button>` : ''}</div>`;
   const s = rtSummary(ym), t = today();
   const next = s.occ.find(o => !o.done && o.date >= t);
-  return `<div class="card rt-mini" role="button" tabindex="0" data-act="tab" data-tab="rt" aria-label="매달 루틴 전체 보기">
+  return `<div class="card rt-mini" role="button" tabindex="0" data-act="tab" data-tab="rt" aria-label="루틴 전체 보기">
     <div class="rt-mini-top"><p>${s.occ.length}개 중 <b>${s.doneN}개</b> 확인</p>${s.outLeft ? `<p class="hint">아직 안 나간 돈 <b>${won(s.outLeft)}</b></p>` : ''}</div>
     <div class="meter" aria-hidden="true"><i style="width:${s.pct}%"></i></div>
     <p class="rt-next">${next ? `다음: <b>${next.date === t ? '오늘' : shortDate(next.date, t)}</b> ${esc(next.r.title)}${next.r.amount ? ` · ${won(next.r.amount)}` : ''}` : s.occ.length ? '이번 달 루틴 날짜를 모두 지났어요.' : '이번 달에는 돌아오는 루틴이 없어요.'}</p>
@@ -1006,7 +1139,7 @@ function viewCal() {
     cells += `<button type="button" id="cd-${d}" class="${cls}" data-act="cal-day" data-date="${d}" aria-pressed="${d === S.ui.sel}" aria-label="${esc(label)}"><span class="cd-top"><span class="dn">${dt.getDate()}</span>${hol ? `<span class="hn">${esc(hol)}</span>` : ''}${st ? `<span class="stamps">${st}</span>` : ''}</span>${n ? `<span class="chips">${chips.slice(0, 4).join('')}</span>` : ''}${n > 2 ? `<span class="more s">+${n - 2}</span>` : ''}${n > 4 ? `<span class="more l">+${n - 4}</span>` : ''}</button>`;
   }
   const layers = [['ev', '일정'], ['rt', '루틴'], ['log', '근무·횟수 도장'], ['proj', '프로젝트']].map(([k, lab]) => `<button type="button" class="lchip" data-act="layer" data-layer="${k}" aria-pressed="${!!L[k]}">${lab}</button>`).join('');
-  const legend = Object.values(KINDS).map(K => `<span><i style="--c:var(--c-${K.color})"></i>${K.label}</span>`).join('') + '<span class="lg-rt">매달 루틴</span>';
+  const legend = Object.values(KINDS).map(K => `<span><i style="--c:var(--c-${K.color})"></i>${K.label}</span>`).join('') + '<span class="lg-rt">루틴</span>';
   return `<div class="cal-layout">
     <div class="card cal-card">
       <div class="cal-head"><h1 class="cal-title"><b>${m}월</b><span>${y}년</span></h1><div class="cal-nav">${ym !== ymOf(t) ? `<button type="button" class="btn sm" data-act="cal-today">오늘</button>` : ''}<button type="button" class="icon-btn" data-act="cal-prev" aria-label="이전 달">${ICON.prev}</button><button type="button" class="icon-btn" data-act="cal-next" aria-label="다음 달">${ICON.next}</button></div></div>
@@ -1034,26 +1167,38 @@ function dayPanel(d) {
   return `<section class="sec day-panel"><div class="sec-head"><h2>${fmtMD(d)}${hol ? ` <span class="hol-tag sm">${esc(hol)}</span>` : ''}</h2>${canWrite() ? `<div class="head-acts"><button type="button" class="btn sm" data-act="new-event" data-date="${d}">${ICON.plus}일정</button><button type="button" class="btn sm" data-act="new-log" data-date="${d}">${ICON.plus}기록</button></div>` : ''}</div>${listCard(dayItems(d), d === today() ? '오늘은 잡힌 일정이 없어요.' : '이 날은 비어 있어요.')}</section>`;
 }
 
-/* ----- 매달 루틴 ----- */
+/* ----- 루틴 (매달·매년) ----- */
 function rtStarter() {
-  const tpl = Object.entries(RT_TEMPLATES).map(([k, v]) => `<button type="button" class="btn sm" data-act="new-routine" data-tpl="${k}">${ICON.plus}${v.title}</button>`).join('');
-  return `<div class="card empty"><p><b>매달 같은 날 돌아오는 일</b>을 한 번만 적어 두세요. 카드 결제일, 적금 자동이체, 월급날처럼요. 매달 새로 적지 않아도 달력과 오늘 화면에 알아서 보여요.</p>${canWrite() ? `<div class="empty-acts"><button type="button" class="btn sm primary" data-act="new-routine">${ICON.plus}직접 만들기</button>${tpl}</div>` : ''}</div>`;
+  const tpl = Object.entries(RT_TEMPLATES).map(([k, v]) => `<button type="button" class="btn sm" data-act="new-routine" data-tpl="${k}">${ICON.plus}${v.title}${v.freq === 'y' && v.months ? ` <small class="muted">${v.months.join('·')}월</small>` : ''}</button>`).join('');
+  return `<div class="card empty"><p><b>매달·매년 같은 날 돌아오는 일</b>을 한 번만 적어 두세요. 카드 결제일·적금 자동이체·월급날(매달), 자동차세·자동차보험 갱신(매년)처럼요. 새로 적지 않아도 달력과 오늘 화면에 알아서 보이고, <b>3개월 전·D-7</b>처럼 미리 알려 드릴 수도 있어요.</p>${canWrite() ? `<div class="empty-acts"><button type="button" class="btn sm primary" data-act="new-routine">${ICON.plus}직접 만들기</button>${tpl}</div>` : ''}</div>`;
 }
 function rtOffRow(r, ym) {
   const K = RT_KINDS[r.kind];
   const why = !r.active ? '잠시 멈춤' : r.end && ym > r.end ? `${fmtYM(r.end)}에 끝남` : r.start && ym < r.start ? `${fmtYM(r.start)}부터` : '';
   const sub = [`<b class="kind">${K.label}</b>`, why, r.amount ? won(r.amount) : ''].filter(Boolean).join(' · ');
-  return `<li class="row is-done" style="--c:var(--c-${K.color})"><button type="button" class="row-btn" data-act="open-routine" data-id="${r.id}"><span class="row-time"><b>매달</b>${dayLabel(r)}</span><span class="row-main"><span class="row-title"><span class="rt-ic">${ICON.repeat}</span>${esc(r.title)}</span><span class="row-sub">${sub}</span></span></button><span class="row-end"></span></li>`;
+  return `<li class="row is-done" style="--c:var(--c-${K.color})"><button type="button" class="row-btn" data-act="open-routine" data-id="${r.id}">${rtTimeCol(r)}<span class="row-main"><span class="row-title"><span class="rt-ic">${ICON.repeat}</span>${esc(r.title)}</span><span class="row-sub">${sub}</span></span></button><span class="row-end"></span></li>`;
+}
+/* '매년 루틴' 한 줄: 다음 날짜와 D-day */
+function yearRow(r, t) {
+  const K = RT_KINDS[r.kind], o = r.active ? nextOcc(r, t) : null;
+  let time, why = '';
+  if (o) { const dt = pd(o.date); time = `<span class="row-time"><b>${dt.getMonth() + 1}.${pad(dt.getDate())}</b>${WD[dt.getDay()]}요일<span class="dd">${dday(o.date)}</span></span>`; }
+  else { time = rtTimeCol(r); why = !r.active ? '잠시 멈춤' : r.end ? `${fmtYM(r.end)}에 끝남` : ''; }
+  const sub = [`<b class="kind">${K.label}</b>`, rtWhen(r), r.amount ? won(r.amount) : '', why, o && o.shifted ? `<span class="shift">${shiftNote(o)}</span>` : '', remTag(r.remind)].filter(Boolean).join(' · ');
+  return `<li class="row${o ? '' : ' is-done'}" style="--c:var(--c-${K.color})"><button type="button" class="row-btn" data-act="open-routine" data-id="${r.id}">${time}<span class="row-main"><span class="row-title"><span class="rt-ic">${ICON.repeat}</span>${esc(r.title)}</span><span class="row-sub">${sub}</span></span></button><span class="row-end"></span></li>`;
 }
 function viewRt() {
   const ym = S.ui.rtYm, cur = ymOf(today()), mlab = `${+ym.slice(5)}월`;
-  const head = `<div class="view-head"><h1>매달 루틴</h1>${canWrite() ? `<button type="button" class="btn sm" data-act="new-routine">${ICON.plus}새 루틴</button>` : ''}</div>
+  const head = `<div class="view-head"><h1>루틴</h1>${canWrite() ? `<button type="button" class="btn sm" data-act="new-routine">${ICON.plus}새 루틴</button>` : ''}</div>
     <div class="mnav"><button type="button" class="icon-btn" data-act="rt-prev" aria-label="이전 달">${ICON.prev}</button><b>${fmtYM(ym)}</b>${ym !== cur ? `<button type="button" class="btn sm" data-act="rt-now">이번 달</button>` : ''}<button type="button" class="icon-btn" data-act="rt-next" aria-label="다음 달">${ICON.next}</button></div>`;
   if (S.phase !== 'ready') return head + loadingCard();
   if (!S.routines.length) return head + rtStarter();
-  const s = rtSummary(ym);
+  const s = rtSummary(ym), t = today();
   const on = new Set(s.occ.map(o => o.r.id));
-  const off = S.routines.filter(r => !on.has(r.id));
+  /* 매년 루틴은 '매년 루틴' 목록에 따로 모아 보여 주고, 다른 달에 없다고 따로 적지 않음 */
+  const off = S.routines.filter(r => !on.has(r.id) && r.freq !== 'y');
+  const yearly = S.routines.filter(r => r.freq === 'y').map(r => ({ r, o: r.active ? nextOcc(r, t) : null }))
+    .sort((a, b) => (a.o ? a.o.date : '9999') < (b.o ? b.o.date : '9999') ? -1 : (a.o ? a.o.date : '9999') > (b.o ? b.o.date : '9999') ? 1 : a.r.order - b.r.order);
   const sum = `<section class="card rt-sum" aria-label="${mlab} 루틴 요약">
       <div class="rt-sum-top">
         <div><p class="eyebrow">${mlab}에 나갈 돈 (결제·납부 + 저축)</p><p class="money"><b>${s.out.toLocaleString('ko-KR')}</b><span>원</span></p></div>
@@ -1069,7 +1214,8 @@ function viewRt() {
     </section>`;
   const list = s.occ.length ? `<ul class="card rows">${s.occ.map(o => rowHTML({ k: 'rt', o }, { rtView: true })).join('')}</ul>` : `<div class="card empty"><p>${mlab}에는 돌아오는 루틴이 없어요.</p></div>`;
   const offList = off.length ? `<details class="sec fold" data-tog="rt-off"${S.ui.rtOffOpen ? ' open' : ''}><summary><h2>${mlab}에 없는 루틴 <span class="muted">${off.length}</span></h2></summary><ul class="card rows">${off.map(r => rtOffRow(r, ym)).join('')}</ul></details>` : '';
-  return head + sum + `<section class="sec"><div class="sec-head"><h2>${mlab} 날짜순</h2><span class="hint">확인한 건 체크해 두세요</span></div>${list}</section>` + offList;
+  const yearList = yearly.length ? `<section class="sec yr-sec"><div class="sec-head"><h2>매년 루틴 <span class="muted">${yearly.length}</span></h2><span class="hint">다음 날짜가 가까운 순</span></div><ul class="card rows">${yearly.map(x => yearRow(x.r, t)).join('')}</ul></section>` : '';
+  return head + sum + `<section class="sec rt-month"><div class="sec-head"><h2>${mlab} 날짜순</h2><span class="hint">확인한 건 체크해 두세요</span></div>${list}</section>` + yearList + offList;
 }
 
 /* ----- 근무·횟수 기록 ----- */
@@ -1248,9 +1394,11 @@ function viewSet() {
   let n = 0;
   for (const m of S.months.values()) n += m.events.length + m.logs.length;
   const share = canShareFiles();
+  const nYear = S.routines.filter(r => r.freq === 'y').length;
   return `<div class="view-head"><h1>설정</h1></div>
   <div class="set-list">
     <section class="card set-card">${sync}</section>
+    <section class="card set-card" id="set-notify">${notifyCard()}</section>
     <section class="card set-card"><h2>앱 설치</h2>${inst}</section>
     <section class="card set-card"><h2>백업</h2>
       <p>${cloud ? '기록은 계정에 저장되지만, 가끔 백업 파일도 만들어 두면 더 안전해요.' : '이 기기에만 저장되어 있어서, 휴대폰을 바꾸거나 크롬 데이터를 지우면 사라질 수 있어요. 가끔 백업 파일을 만들어 두세요.'} 불러오기는 지금 기록에 <b>더해져요</b>(같은 항목은 백업 내용으로 바뀌어요).</p>
@@ -1259,7 +1407,7 @@ function viewSet() {
     <section class="card set-card"><h2>정보</h2>
       <ul class="kv">
         <li><span>저장 위치</span><b>${cloud ? '내 Firebase 계정 (PC·폰 연동)' : '이 기기 (크롬 저장소)'}</b></li>
-        <li><span>매달 루틴</span><b>${S.routines.length}개</b></li>
+        <li><span>루틴</span><b>${S.routines.length}개${nYear ? ` (매년 ${nYear}개)` : ''}</b></li>
         <li><span>항목 · 프로젝트</span><b>${S.trackers.length}개 · ${S.projects.length}개</b></li>
         <li><span>불러온 일정·기록</span><b>${n}건</b></li>
         <li><span>공휴일 정보</span><b>2026–2027년</b></li>
@@ -1267,6 +1415,25 @@ function viewSet() {
       </ul>
     </section>
   </div>`;
+}
+
+/* 설정 → 미리 알림 */
+function notifyCard() {
+  const perm = notifPerm(), on = P.notify && perm === 'granted', t = today();
+  const nxt = S.phase === 'ready' ? remindersBetween(addDays(t, 1), addDays(t, 400))[0] : null;
+  const nextLine = S.phase !== 'ready' ? '' : nxt
+    ? `<ul class="kv"><li><span>다음 알림</span><b>${fmtMD(nxt.fire)} · ${esc(nxt.title)} (${leadLabel(nxt.lead)})</b></li></ul>`
+    : '<p class="hint">아직 정해 둔 미리 알림이 없어요. 루틴이나 일정을 열어 <b>미리 알림</b>을 골라 주세요.</p>';
+  const head = `<h2>미리 알림 ${on ? '<span class="pill st-active">켜짐</span>' : '<span class="pill st-plan">꺼짐</span>'}</h2>`;
+  if (perm === 'unsupported') return head + '<p>이 브라우저는 알림을 보내지 못해요. 미리 알림은 앱을 열 때 <b>오늘</b> 화면 맨 위에 보여 드려요.</p>' + nextLine;
+  if (perm === 'denied') return head + `<p>이 기기에서 알림이 <b>차단</b>되어 있어요. 폰 <b>설정 → 애플리케이션 → 일정수첩</b>(없으면 <b>Chrome</b>) <b>→ 알림</b>을 허용한 뒤 아래 버튼을 눌러 주세요.</p>${nextLine}<div class="set-acts"><button type="button" class="btn sm" data-act="notify-on">다시 확인</button></div>`;
+  if (!on) return head + `<p>루틴·일정에 정해 둔 <b>미리 알림</b>(예: 3개월 전, D-7)을 폰 알림으로 받아요. 켜는 건 <b>이 기기에서만</b>이에요. PC와 폰 둘 다 받으려면 각각 켜 주세요.</p>${nextLine}<div class="set-acts"><button type="button" class="btn sm primary" data-act="notify-on">${ICON.bell}알림 켜기</button></div>`;
+  const bg = S.notif.bg;
+  const how = bg === 'on' ? '앱이 꺼져 있어도 크롬이 <b>하루에 한두 번</b> 확인해서 알려 드려요. 날짜는 맞지만 몇 시에 올지는 정할 수 없어요.'
+    : bg === 'no-install' ? '<b>설치한 앱(홈 화면 아이콘)</b>으로 열어야 앱이 꺼져 있을 때도 알림이 와요. 지금은 앱을 열 때 오늘 화면에 보여 드려요.'
+    : bg === 'unsupported' ? '이 브라우저는 앱이 꺼져 있을 때 알림을 보내지 못해요. 앱을 열면 오늘 화면에 보여 드려요.'
+    : '알림 준비 상태를 확인하는 중이에요…';
+  return head + `<p>${how}</p>${nextLine}<div class="set-acts"><button type="button" class="btn sm" data-act="notify-test">시험 알림 보내기</button><button type="button" class="btn sm" data-act="notify-off">끄기</button></div>`;
 }
 
 /* ----- 로그인 ----- */
@@ -1337,6 +1504,7 @@ function draw() {
   $('#fab').hidden = !canWrite() || v === 'set' || (v === 'proj' && S.ui.pjSort && !S.ui.proj);
   drawSync();
   restoreFocus(f);
+  if (S.phase === 'ready' || S.gate) remQueue(); /* 기록이 바뀌면 폰 알림 목록도 새로 */
 }
 function captureFocus() { const a = document.activeElement; if (!a || !a.id || !$('#main').contains(a)) return null; let s = null, e = null; try { s = a.selectionStart; e = a.selectionEnd; } catch (x) { /* 날짜 입력칸 */ } return { id: a.id, s, e }; }
 function restoreFocus(f) { if (!f) return; const el = document.getElementById(f.id); if (!el || !$('#main').contains(el)) return; el.focus({ preventScroll: true }); if (f.s != null) { try { el.setSelectionRange(f.s, f.e); } catch (x) { /* 무시 */ } } }
@@ -1364,6 +1532,103 @@ function toast(msg, action, isErr) {
   if (action) $('#toast-act').onclick = () => { el.hidden = true; action.fn(); };
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { el.hidden = true; }, action ? 6000 : isErr ? 6000 : 3000);
+}
+
+/* ================= 미리 알림 → 폰 알림 =================
+   서버 없이 동작: 앱이 앞으로 울릴 알림 목록을 이 기기 저장소(IndexedDB)에 적어 두면,
+   앱이 꺼져 있어도 크롬이 하루 한두 번 서비스워커(sw.js)를 깨워서(Periodic Background Sync)
+   오늘 울릴 알림을 폰 알림으로 보여 줍니다. 그래서 날짜는 맞지만 정확한 시각은 정할 수 없어요. */
+const REM_TAG = 'ilsu-remind', REM_DB = 'ilsu-remind';
+const notifPerm = () => 'Notification' in window ? Notification.permission : 'unsupported';
+function kvDo(mode, fn) {
+  return new Promise((res, rej) => {
+    let q;
+    try { q = indexedDB.open(REM_DB, 1); } catch (e) { rej(e); return; }
+    q.onupgradeneeded = () => q.result.createObjectStore('kv');
+    q.onerror = () => rej(q.error);
+    q.onsuccess = () => {
+      const db = q.result, tx = db.transaction('kv', mode), out = fn(tx.objectStore('kv'));
+      tx.oncomplete = () => { db.close(); res(out && 'result' in out ? out.result : undefined); };
+      tx.onerror = () => { db.close(); rej(tx.error); };
+    };
+  });
+}
+const kvGet = k => kvDo('readonly', s => s.get(k));
+const kvSet = (k, v) => kvDo('readwrite', s => { s.put(v, k); });
+function swReady(ms = 3000) {
+  if (!('serviceWorker' in navigator)) return Promise.resolve(null);
+  return Promise.race([navigator.serviceWorker.ready, new Promise(r => setTimeout(() => r(null), ms))]).catch(() => null);
+}
+/* 서비스워커가 읽을 알림 목록 (앞으로 400일) */
+function remSchedule() {
+  const t = today(), on = P.notify && notifPerm() === 'granted' && canWrite();
+  const items = !on ? [] : remindersBetween(addDays(t, -3), addDays(t, 400)).filter(x => !P.remSeen[x.k]).map(x => ({
+    k: x.k, g: x.g, fire: x.fire, occ: x.occ, title: x.title,
+    sub: [`${fmtMD(x.occ)}${x.time ? ' ' + fmtTime(x.time) : ''}`, x.amount ? won(x.amount) : '', `${leadLong(x.lead)} 알림`].filter(Boolean).join(' · ')
+  }));
+  return { v: 1, on, items };
+}
+let remTimer = 0, remLast = '';
+function remQueue() { clearTimeout(remTimer); remTimer = setTimeout(remSync, 800); }
+async function remSync(force) {
+  if (!('indexedDB' in window) || (S.phase !== 'ready' && !S.gate && !force)) return; /* 불러오는 중에는 덮어쓰지 않음 (로그아웃이면 비움) */
+  const sch = remSchedule(), s = JSON.stringify(sch);
+  if (s === remLast && !force) return;
+  try { await kvSet('schedule', { ...sch, at: Date.now() }); remLast = s; } catch (e) { /* 저장소를 못 쓰면 오늘 화면 알림만 */ }
+}
+async function remMarkShown(keys) {
+  if (!keys.length || !('indexedDB' in window)) return;
+  try { const sh = (await kvGet('shown')) || {}; for (const k of keys) sh[k] = today(); await kvSet('shown', sh); } catch (e) { /* 무시 */ }
+}
+/* 앱이 꺼져 있을 때도 확인하도록 크롬에 부탁 (설치한 앱에서만 됨) */
+async function bgSync(on) {
+  const reg = await swReady();
+  if (!reg || !('periodicSync' in reg)) return 'unsupported';
+  try {
+    if (!on) { await reg.periodicSync.unregister(REM_TAG); return ''; }
+    let st = 'granted';
+    try { st = (await navigator.permissions.query({ name: 'periodic-background-sync' })).state; } catch (e) { /* 모르는 이름이면 그냥 시도 */ }
+    if (st !== 'granted') return 'no-install';
+    await reg.periodicSync.register(REM_TAG, { minInterval: 12 * 3600 * 1000 });
+    return 'on';
+  } catch (e) { return 'no-install'; }
+}
+async function notifyOn() {
+  if (notifPerm() === 'unsupported') { toast('이 브라우저는 알림을 보내지 못해요.', null, true); return; }
+  let p = Notification.permission;
+  if (p === 'default') { try { p = await Notification.requestPermission(); } catch (e) { p = Notification.permission; } }
+  if (p !== 'granted') {
+    P.notify = false; savePrefs(); render();
+    toast(p === 'denied' ? '알림이 차단되어 있어요. 폰 설정에서 이 앱의 알림을 허용해 주세요.' : '알림을 허용해야 받을 수 있어요.', null, true);
+    return;
+  }
+  P.notify = true; savePrefs(); S.notif.bg = ''; render();
+  S.notif.bg = await bgSync(true);
+  await remSync(true);
+  render();
+  toast(S.notif.bg === 'on' ? '알림을 켰어요. 정해 둔 날에 폰 알림으로 알려 드릴게요.' : '알림을 켰어요. 설치한 앱으로 열면 앱이 꺼져 있어도 알림이 와요.');
+}
+async function notifyOff() {
+  P.notify = false; savePrefs();
+  S.notif.bg = await bgSync(false);
+  await remSync(true);
+  render();
+  toast('이 기기에서 폰 알림을 껐어요. 오늘 화면의 미리 알림은 그대로 보여요.');
+}
+async function notifyTest() {
+  if (notifPerm() !== 'granted') { notifyOn(); return; }
+  const reg = await swReady();
+  const opt = { body: '이렇게 알림이 와요. 미리 알림을 정해 둔 날에 알려 드릴게요.', icon: 'icon-192.png', badge: 'badge-96.png', tag: 'ilsu-test', lang: 'ko' };
+  try {
+    if (reg && reg.showNotification) await reg.showNotification('일정수첩 · 알림 시험', opt);
+    else new Notification('일정수첩 · 알림 시험', opt);
+    toast('시험 알림을 보냈어요. 알림창을 확인해 보세요.');
+  } catch (e) { toast('알림을 보내지 못했어요. 폰 설정에서 이 앱의 알림이 켜져 있는지 확인해 주세요.', null, true); }
+}
+/* 미리 알림을 정해 저장했는데 이 기기에서 알림이 꺼져 있으면 켜기를 권함 */
+function remindToast(msg, hasRemind) {
+  if (hasRemind && !P.notify && ['default', 'granted'].includes(notifPerm())) toast(`${msg} 폰 알림도 받으려면 켜 주세요.`, { label: '알림 켜기', fn: notifyOn });
+  else toast(msg);
 }
 
 /* ================= 저장소 =================
@@ -1521,7 +1786,7 @@ function writeFail(e) {
   toast(msg, null, true);
 }
 
-const EV_KEYS = ['title', 'kind', 'date', 'time', 'place', 'memo', 'done', 'projectId', 'createdAt', 'updatedAt'];
+const EV_KEYS = ['title', 'kind', 'date', 'time', 'place', 'memo', 'done', 'projectId', 'remind', 'createdAt', 'updatedAt'];
 const LOG_KEYS = ['trackerId', 'date', 'qty', 'pay', 'memo', 'createdAt'];
 const TR_KEYS = ['name', 'unit', 'rate', 'goal', 'color', 'mark', 'order', 'createdAt'];
 const PJ_KEYS = ['name', 'status', 'start', 'due', 'color', 'memo', 'tasks', 'notes', 'order', 'createdAt', 'updatedAt'];
@@ -1805,37 +2070,74 @@ function sheetHead(title, sub) { return `<header class="sheet-head"><span class=
 function sheetFoot(del) { return `<footer class="sheet-foot">${del ? '<div class="del-zone"><button type="button" class="btn danger" data-act="ask-delete">삭제</button></div>' : ''}<div class="foot-main"><button type="button" class="btn" data-act="close-sheet">취소</button><button type="submit" class="btn primary">저장</button></div></footer>`; }
 function swatches(pfx, sel) { return `<div class="swatches" role="radiogroup" aria-labelledby="${pfx}-color-l">${PALETTE.map(c => `<label title="${PNAME[c]}"><input type="radio" id="${pfx}-c-${c}" name="color" value="${c}"${c === sel ? ' checked' : ''} aria-label="${PNAME[c]}"><span style="--c:var(--c-${c})"></span></label>`).join('')}</div>`; }
 function formErr(f, msg, focusId) { const p = f.querySelector('.form-err'); if (p) { p.textContent = msg; p.hidden = false; } if (focusId) { const el = f.querySelector('#' + focusId); if (el) el.focus(); } }
+
+/* 미리 알림 고르기 (루틴·일정 입력 창 공용): 당일 · D-1 · D-3 · D-7 · D-14 · 1·2·3·6개월 전 + 직접 입력 */
+const remChip = (l, on, mode) => `<label class="rchip"${remOK(l, mode) ? '' : ' hidden'}><input type="checkbox" name="remind" value="${l}"${on ? ' checked' : ''}><span>${leadLabel(l)}</span></label>`;
+function remindField(pfx, sel, mode) {
+  const vals = [...new Set([...REM_PRESETS, ...sel])].sort((a, b) => leadDays(a) - leadDays(b));
+  return `<div class="field rem-field" data-mode="${mode}">
+    <span class="lab" id="${pfx}-rm-l"><span class="bell-ic">${ICON.bell}</span>미리 알림 <small>(여러 개 고를 수 있어요)</small></span>
+    <div class="rchips" role="group" aria-labelledby="${pfx}-rm-l">${vals.map(l => remChip(l, sel.includes(l), mode)).join('')}</div>
+    <div class="rm-add"><span class="lab">직접</span><input id="${pfx}-rm-n" inputmode="numeric" maxlength="3" placeholder="예: 100" autocomplete="off" aria-label="얼마나 전에 알릴지 숫자"><select id="${pfx}-rm-u" aria-label="단위"><option value="d">일 전 (D-)</option><option value="m"${mode === 'm' ? ' hidden disabled' : ''}>개월 전</option></select><button type="button" class="btn sm" data-act="rm-add">추가</button></div>
+    <p class="rm-prev" id="${pfx}-rm-prev" role="status"></p>
+  </div>`;
+}
+/* 매달 루틴이면 27일 전까지만 보이게 (개월 단위 숨김) */
+function remMode(fld, mode) {
+  if (!fld || fld.dataset.mode === mode) return;
+  fld.dataset.mode = mode;
+  for (const lb of fld.querySelectorAll('.rchip')) lb.hidden = !remOK(lb.querySelector('input').value, mode);
+  const u = fld.querySelector('.rm-add select'), om = u && u.querySelector('option[value="m"]');
+  if (om) { om.hidden = om.disabled = mode === 'm'; if (mode === 'm') u.value = 'd'; }
+}
+const remPicked = f => normRemind([...f.querySelectorAll('.rem-field input[name="remind"]:checked')].filter(i => !i.closest('.rchip').hidden).map(i => i.value), (f.querySelector('.rem-field') || { dataset: {} }).dataset.mode || 'e');
+const fmtRem = d => { const x = pd(d); return `${x.getFullYear() !== curY() ? x.getFullYear() + '년 ' : ''}${x.getMonth() + 1}월 ${x.getDate()}일(${WD[x.getDay()]})`; };
+/* 알림이 울리는 날 미리 보기: "3개월 전 11월 6일(금) · D-7 1월 30일(토)" */
+function remPreview(occ, leads) {
+  const t = today();
+  return leads.slice().sort((a, b) => leadDays(b) - leadDays(a)).map(l => { const f = fireDate(occ, l); return `<span class="${f < t ? 'past' : ''}">${leadLabel(l)} ${f === t ? '<b>오늘</b>' : f < t ? fmtRem(f) + ' (지남)' : `<b>${fmtRem(f)}</b>`}</span>`; }).join(' · ');
+}
+function formSync(f) { if (!f) return; if (f.dataset.form === 'routine') rtSync(f); else if (f.dataset.form === 'event') evSync(f); }
 const defDate = () => S.ui.tab === 'cal' ? S.ui.sel : today();
 
 function sheetAdd(date) {
   openSheet(`<div class="sheet">${sheetHead('무엇을 추가할까요?', fmtMD(date))}<div class="sheet-body"><div class="choose">
     <button type="button" data-act="new-event" data-date="${date}"><span class="ic">${ICON.cal}</span><b>일정</b><span>약속·예약·할 일을 날짜에 적어요</span></button>
-    <button type="button" data-act="new-routine"><span class="ic">${ICON.repeat}</span><b>매달 루틴</b><span>카드 결제일처럼 매달 돌아오는 일을 한 번만 적어요</span></button>
+    <button type="button" data-act="new-routine"><span class="ic">${ICON.repeat}</span><b>루틴 (매달·매년)</b><span>카드 결제일·자동차보험처럼 돌아오는 일을 한 번만 적어요</span></button>
     <button type="button" data-act="new-log" data-date="${date}"><span class="ic">${ICON.tally}</span><b>근무·횟수 기록</b><span>한 일을 도장 찍듯 하나씩 남겨요</span></button>
     <button type="button" data-act="new-project"><span class="ic">${ICON.list}</span><b>프로젝트</b><span>단계를 나눠 진행 상황을 체크해요</span></button>
   </div></div></div>`, { type: 'add' });
 }
 function sheetEvent(ev, def = {}) {
   const isNew = !ev;
-  const e = ev || { id: uid('e'), title: '', kind: 'appt', date: def.date || today(), time: '', place: '', memo: '', done: false, projectId: def.projectId || '', createdAt: 0 };
+  const e = ev || { id: uid('e'), title: '', kind: 'appt', date: def.date || today(), time: '', place: '', memo: '', done: false, projectId: def.projectId || '', remind: [], createdAt: 0 };
   const projs = S.projects.filter(p => p.status !== 'done' || p.id === e.projectId);
   openSheet(`<form class="sheet" data-form="event" novalidate>
     ${sheetHead(isNew ? '일정 추가' : '일정 수정')}
     <div class="sheet-body">
-      <label class="field"><span class="lab">제목</span><input id="ev-title" name="title" maxlength="80" value="${esc(e.title)}" placeholder="예: 치과 예약, 친구 약속" autocomplete="off" data-autofocus></label>
+      <label class="field"><span class="lab">제목</span><input id="ev-title" name="title" maxlength="80" value="${esc(e.title)}" placeholder="예: 치과 예약, 친구 결혼식" autocomplete="off" data-autofocus></label>
       <div class="field"><span class="lab" id="ev-kind-l">종류</span><div class="seg" role="radiogroup" aria-labelledby="ev-kind-l">${Object.entries(KINDS).map(([k, K]) => `<label><input type="radio" id="ev-kind-${k}" name="kind" value="${k}"${k === e.kind ? ' checked' : ''}><span><i class="dot" style="--c:var(--c-${K.color})"></i>${K.label}</span></label>`).join('')}</div></div>
       <div class="row2">
         <label class="field"><span class="lab">날짜</span><input id="ev-date" name="date" type="date" value="${e.date}"></label>
         <label class="field"><span class="lab">시간 <small>(선택)</small></span><input id="ev-time" name="time" type="time" value="${e.time}"></label>
       </div>
+      ${remindField('ev', e.remind || [], 'e')}
       <label class="field"><span class="lab">장소 <small>(선택)</small></span><input id="ev-place" name="place" maxlength="60" value="${esc(e.place)}" placeholder="예: 강남역 11번 출구" autocomplete="off"></label>
       ${projs.length ? `<label class="field"><span class="lab">프로젝트 연결 <small>(선택)</small></span><select id="ev-proj" name="projectId"><option value="">연결 안 함</option>${projs.map(p => `<option value="${p.id}"${p.id === e.projectId ? ' selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>` : ''}
       <label class="field"><span class="lab">메모 <small>(선택)</small></span><textarea id="ev-memo" name="memo" rows="2" maxlength="400">${esc(e.memo)}</textarea></label>
-      ${isNew ? '<label class="field-check"><span class="check"><input type="checkbox" id="ev-repeat" name="repeat"><span></span></span>매달 이 날짜에 반복 (루틴으로 저장)</label>' : `<label class="field-check"><span class="check"><input type="checkbox" id="ev-done" name="done"${e.done ? ' checked' : ''}><span></span></span>마친 일정</label>`}
+      ${isNew ? '<label class="field"><span class="lab">반복</span><select id="ev-repeat" name="repeat"><option value="">안 함 (이 날 한 번)</option><option value="m">매달 이 날짜에 (루틴으로 저장)</option><option value="y">매년 이 날짜에 (루틴으로 저장)</option></select></label>' : `<label class="field-check"><span class="check"><input type="checkbox" id="ev-done" name="done"${e.done ? ' checked' : ''}><span></span></span>마친 일정</label>`}
       <p class="form-err" role="alert" hidden></p>
     </div>
     ${sheetFoot(!isNew)}
   </form>`, { type: 'event', prev: ev, id: e.id, delQ: '이 일정을 지울까요?' });
+  evSync(dlg.querySelector('form'));
+}
+function evSync(f) {
+  const rep = f.elements.repeat ? f.elements.repeat.value : '';
+  remMode(f.querySelector('.rem-field'), rep === 'm' ? 'm' : rep === 'y' ? 'y' : 'e');
+  const date = f.elements.date.value, el = f.querySelector('#ev-rm-prev'), leads = remPicked(f);
+  if (!el) return;
+  el.innerHTML = leads.length && isDate(date) ? `알림 날짜: ${remPreview(date, leads)}` : '';
 }
 function sheetLog(log, def = {}) {
   if (!S.trackers.length) return sheetTracker(null, { kind: 'log', date: def.date || today() });
@@ -1923,44 +2225,61 @@ function sheetProject(p) {
 function sheetRoutine(rt, def = {}) {
   const isNew = !rt;
   const tpl = def.tpl && RT_TEMPLATES[def.tpl];
-  const x = rt || { id: uid('r'), title: def.title || (tpl ? tpl.title : ''), kind: tpl ? tpl.kind : 'pay', day: def.day || (tpl ? tpl.day : +today().slice(8)),
-    amount: 0, shift: tpl ? tpl.shift : 'next', start: def.start || ymOf(today()), end: '', memo: def.memo || '', active: true, done: {}, order: 0, createdAt: 0 };
+  const t = today(), curM = +t.slice(5, 7);
+  const x = rt || { id: uid('r'), title: def.title || (tpl ? tpl.title : ''), kind: tpl ? tpl.kind : 'pay',
+    freq: def.freq || (tpl && tpl.freq) || 'm', months: def.months || (tpl && tpl.months) || [curM], day: def.day || (tpl && tpl.day) || +t.slice(8),
+    amount: 0, shift: tpl ? tpl.shift : 'next', start: def.start || ymOf(t), end: '', memo: def.memo || '', active: true,
+    remind: def.remind || (tpl && tpl.remind) || [], done: {}, order: 0, createdAt: 0 };
+  const months = x.freq === 'y' && x.months.length ? x.months : [curM];
   const days = Array.from({ length: 31 }, (_, i) => i + 1).map(n => `<option value="${n}"${x.day === n ? ' selected' : ''}>${n}일</option>`).join('') + `<option value="last"${x.day === 'last' ? ' selected' : ''}>말일</option>`;
+  const yr = x.freq === 'y';
   openSheet(`<form class="sheet" data-form="routine" novalidate>
-    ${sheetHead(isNew ? '매달 루틴 추가' : '루틴 수정', def.fromEvent ? '매달 반복할 내용을 확인하고 저장해 주세요.' : isNew ? '한 번만 적어 두면 매달 달력과 오늘 화면에 나타나요.' : '')}
+    ${sheetHead(isNew ? '루틴 추가' : '루틴 수정', def.fromEvent ? `${yr ? '매년' : '매달'} 반복할 내용을 확인하고 저장해 주세요.` : isNew ? '한 번만 적어 두면 돌아오는 날마다 달력과 오늘 화면에 나타나요.' : '')}
     <div class="sheet-body">
-      <label class="field"><span class="lab">이름</span><input id="rt-title" name="title" maxlength="60" value="${esc(x.title)}" placeholder="예: 카드 결제일, 적금 자동이체" autocomplete="off" data-autofocus></label>
+      <label class="field"><span class="lab">이름</span><input id="rt-title" name="title" maxlength="60" value="${esc(x.title)}" placeholder="예: 카드 결제일, 자동차보험 갱신" autocomplete="off" data-autofocus></label>
       <div class="field"><span class="lab" id="rt-kind-l">종류</span><div class="seg" role="radiogroup" aria-labelledby="rt-kind-l">${Object.entries(RT_KINDS).map(([k, K]) => `<label><input type="radio" id="rt-kind-${k}" name="kind" value="${k}"${k === x.kind ? ' checked' : ''}><span><i class="dot" style="--c:var(--c-${K.color})"></i>${K.label}</span></label>`).join('')}</div></div>
+      <div class="field"><span class="lab" id="rt-freq-l">반복</span><div class="seg" role="radiogroup" aria-labelledby="rt-freq-l"><label><input type="radio" id="rt-freq-m" name="freq" value="m"${yr ? '' : ' checked'}><span>매달</span></label><label><input type="radio" id="rt-freq-y" name="freq" value="y"${yr ? ' checked' : ''}><span>매년</span></label></div></div>
+      <div class="field" id="rt-months-f"${yr ? '' : ' hidden'}><span class="lab" id="rt-months-l">몇 월에 <small>(여러 달 고를 수 있어요 · 예: 자동차세 6월·12월)</small></span><div class="mchips" role="group" aria-labelledby="rt-months-l">${Array.from({ length: 12 }, (_, i) => i + 1).map(m => `<label><input type="checkbox" id="rt-m-${m}" name="months" value="${m}"${months.includes(m) ? ' checked' : ''}><span>${m}월</span></label>`).join('')}</div></div>
       <div class="row2">
-        <label class="field"><span class="lab">매달</span><select id="rt-day" name="day">${days}</select></label>
+        <label class="field"><span class="lab" id="rt-day-lab">${yr ? '날짜' : '매달'}</span><select id="rt-day" name="day">${days}</select></label>
         <div class="field"><label class="lab" for="rt-amount">금액 <small>(선택)</small></label><span class="suffix"><input id="rt-amount" name="amount" inputmode="numeric" autocomplete="off" value="${x.amount ? x.amount.toLocaleString('ko-KR') : ''}" placeholder="예: 350,000" data-money><i>원</i></span></div>
       </div>
-      <label class="field"><span class="lab">주말·공휴일이면</span><select id="rt-shift" name="shift" data-auto="${isNew ? '1' : '0'}">${Object.entries(RT_SHIFT).map(([k, lab]) => `<option value="${k}"${k === x.shift ? ' selected' : ''}>${lab}</option>`).join('')}</select><span class="hint">카드 결제·자동이체는 보통 다음 평일에 빠져나가고, 월급은 앞 평일에 들어와요.</span></label>
+      <label class="field"><span class="lab">주말·공휴일이면</span><select id="rt-shift" name="shift" data-auto="${isNew && !tpl ? '1' : '0'}">${Object.entries(RT_SHIFT).map(([k, lab]) => `<option value="${k}"${k === x.shift ? ' selected' : ''}>${lab}</option>`).join('')}</select><span class="hint">카드 결제·자동이체·세금은 보통 다음 평일로 미뤄지고, 월급은 앞 평일에 들어와요.</span></label>
       <p class="rt-preview" id="rt-preview" role="status"></p>
+      ${remindField('rt', x.remind || [], x.freq)}
       <div class="row2">
-        <label class="field"><span class="lab">시작하는 달</span><input id="rt-start" name="start" type="month" value="${x.start || ymOf(today())}"></label>
+        <label class="field"><span class="lab">시작하는 달</span><input id="rt-start" name="start" type="month" value="${x.start || ymOf(t)}"></label>
         <label class="field"><span class="lab">끝나는 달 <small>(선택)</small></span><input id="rt-end" name="end" type="month" value="${x.end}"></label>
       </div>
       <label class="field"><span class="lab">메모 <small>(선택)</small></span><input id="rt-memo" name="memo" maxlength="200" value="${esc(x.memo)}" placeholder="예: 국민카드, 신한은행 자동이체" autocomplete="off"></label>
-      ${isNew ? '' : `<label class="field-check"><span class="check"><input type="checkbox" id="rt-active" name="active"${x.active ? ' checked' : ''}><span></span></span>매달 보여 주기 <small class="muted">(끄면 잠시 멈춰요)</small></label>`}
+      ${isNew ? '' : `<label class="field-check"><span class="check"><input type="checkbox" id="rt-active" name="active"${x.active ? ' checked' : ''}><span></span></span>계속 보여 주기 <small class="muted">(끄면 잠시 멈춰요)</small></label>`}
       <p class="form-err" role="alert" hidden></p>
     </div>
     ${sheetFoot(!isNew)}
-  </form>`, { type: 'routine', prev: rt, id: x.id, delQ: '이 루틴을 지울까요? 지난 달 확인 기록도 함께 지워져요.' });
+  </form>`, { type: 'routine', prev: rt, id: x.id, delQ: '이 루틴을 지울까요? 지난 확인 기록도 함께 지워져요.' });
   rtSync(dlg.querySelector('form'));
 }
 function rtSync(f) {
   const kind = (f.querySelector('input[name="kind"]:checked') || {}).value || 'etc';
   const sh = f.elements.shift;
   if (sh.dataset.auto === '1') sh.value = kind === 'pay' || kind === 'save' ? 'next' : kind === 'income' ? 'prev' : 'none';
+  const freq = (f.querySelector('input[name="freq"]:checked') || {}).value === 'y' ? 'y' : 'm';
+  f.querySelector('#rt-months-f').hidden = freq !== 'y';
+  f.querySelector('#rt-day-lab').textContent = freq === 'y' ? '날짜' : '매달';
+  remMode(f.querySelector('.rem-field'), freq);
+  const months = [...f.querySelectorAll('input[name="months"]:checked')].map(i => +i.value);
   const dv = f.elements.day.value, day = dv === 'last' ? 'last' : +dv;
   const ok = v => /^\d{4}-\d{2}$/.test(v) ? v : '';
-  const r = { active: true, day, shift: sh.value, start: ok(f.elements.start.value), end: ok(f.elements.end.value), done: {} };
-  const t = today(), el = f.querySelector('#rt-preview');
+  const r = { active: true, freq, months, day, shift: sh.value, start: ok(f.elements.start.value), end: ok(f.elements.end.value), done: {} };
+  const t = today(), el = f.querySelector('#rt-preview'), rp = f.querySelector('#rt-rm-prev');
+  rp.innerHTML = '';
+  if (freq === 'y' && !months.length) { el.textContent = '몇 월에 돌아오는지 골라 주세요.'; return; }
   let ym = r.start && r.start > ymOf(t) ? r.start : ymOf(t), o = null;
-  for (let i = 0; i < 24 && !o; i++) { const c = routineOcc(r, ym); if (c && c.date >= t) o = c; ym = addMonths(ym, 1); }
+  for (let i = 0; i < 27 && !o; i++) { const c = routineOcc(r, ym); if (c && c.date >= t) o = c; ym = addMonths(ym, 1); }
   if (!o) { el.textContent = '앞으로 돌아오는 날이 없어요. 끝나는 달을 확인해 주세요.'; return; }
-  el.innerHTML = `다음 날짜: <b>${fmtMD(o.date)}</b>${o.shifted ? ` · ${shiftNote(o)}` : ''}${typeof day === 'number' && day >= 29 ? ' · 날짜가 없는 달은 말일로 바뀌어요' : ''}`;
+  el.innerHTML = `다음 날짜: <b>${fmtMD(o.date)}</b>${o.date > t ? ` <span class="dd">${dday(o.date)}</span>` : ' (오늘)'}${o.shifted ? ` · ${shiftNote(o)}` : ''}${typeof day === 'number' && day >= 29 ? ' · 날짜가 없는 달은 말일로 바뀌어요' : ''}`;
+  const leads = remPicked(f);
+  if (leads.length) rp.innerHTML = `다음 알림: ${remPreview(o.date, leads)}`;
 }
 function sheetTask(p, tk) {
   openSheet(`<form class="sheet" data-form="task" novalidate>${sheetHead('단계 수정', esc(p.name))}<div class="sheet-body">
@@ -1977,20 +2296,21 @@ const forms = {
     const title = String(fd.get('title') || '').trim(), date = String(fd.get('date') || '');
     if (!title) return formErr(f, '제목을 적어 주세요.', 'ev-title');
     if (!isDate(date)) return formErr(f, '날짜를 골라 주세요.', 'ev-date');
-    if (!sh.prev && fd.get('repeat') === 'on') {
+    const rep = String(fd.get('repeat') || '');
+    if (!sh.prev && (rep === 'm' || rep === 'y')) {
       const memo = [String(fd.get('place') || '').trim(), String(fd.get('memo') || '').trim()].filter(Boolean).join(' · ').slice(0, 200);
       closeSheet();
-      sheetRoutine(null, { title, day: +date.slice(8), start: ymOf(date), memo, fromEvent: true });
+      sheetRoutine(null, { title, day: +date.slice(8), start: ymOf(date), memo, fromEvent: true, freq: rep, months: [+date.slice(5, 7)], remind: normRemind(fd.getAll('remind'), rep) });
       return;
     }
     const prev = sh.prev, now = Date.now(), time = String(fd.get('time') || '');
     const ev = { id: sh.id, title: title.slice(0, 80), kind: KINDS[fd.get('kind')] ? fd.get('kind') : 'appt', date, time: isTime(time) ? time : '',
       place: String(fd.get('place') || '').trim().slice(0, 60), memo: String(fd.get('memo') || '').trim().slice(0, 400),
-      done: prev ? fd.get('done') === 'on' : false, projectId: String(fd.get('projectId') || ''),
+      done: prev ? fd.get('done') === 'on' : false, projectId: String(fd.get('projectId') || ''), remind: normRemind(fd.getAll('remind'), 'e'),
       createdAt: prev ? (prev.createdAt || now) : now, updatedAt: now };
     closeSheet();
     if (S.ui.tab === 'cal') { S.ui.sel = date; if (ymOf(date) !== S.ui.calYm) S.ui.calYm = ymOf(date); }
-    if (putEvent(prev, ev)) toast(prev ? '일정을 고쳤어요.' : `${fmtMD(date)}에 일정을 넣었어요.`);
+    if (putEvent(prev, ev)) remindToast(prev ? '일정을 고쳤어요.' : `${fmtMD(date)}에 일정을 넣었어요.`, ev.remind.length > 0 && date > today() && !(prev && prev.remind.length));
   },
   log(f) {
     const fd = new FormData(f), sh = S.sheet;
@@ -2052,19 +2372,22 @@ const forms = {
     const fd = new FormData(f), sh = S.sheet;
     const title = String(fd.get('title') || '').trim();
     if (!title) return formErr(f, '이름을 적어 주세요.', 'rt-title');
+    const freq = fd.get('freq') === 'y' ? 'y' : 'm';
+    const months = freq === 'y' ? [...new Set(fd.getAll('months').map(Number).filter(n => Number.isInteger(n) && n >= 1 && n <= 12))].sort((a, b) => a - b) : [];
+    if (freq === 'y' && !months.length) return formErr(f, '매년 몇 월에 돌아오는지 골라 주세요.', 'rt-m-1');
     const dv = String(fd.get('day') || '');
     const day = dv === 'last' ? 'last' : Math.min(31, Math.max(1, parseInt(dv, 10) || 1));
     const start = /^\d{4}-\d{2}$/.test(fd.get('start')) ? fd.get('start') : ymOf(today());
     const end = /^\d{4}-\d{2}$/.test(fd.get('end')) ? fd.get('end') : '';
     if (end && end < start) return formErr(f, '끝나는 달이 시작하는 달보다 빨라요. 날짜를 확인해 주세요.', 'rt-end');
     const prev = sh.prev, now = Date.now();
-    const r = { id: sh.id, title: title.slice(0, 60), kind: RT_KINDS[fd.get('kind')] ? fd.get('kind') : 'etc', day, amount: digits(fd.get('amount')),
+    const r = { id: sh.id, title: title.slice(0, 60), kind: RT_KINDS[fd.get('kind')] ? fd.get('kind') : 'etc', freq, months, day, amount: digits(fd.get('amount')),
       shift: RT_SHIFT[fd.get('shift')] ? fd.get('shift') : 'none', start, end, memo: String(fd.get('memo') || '').trim().slice(0, 200),
-      active: prev ? fd.get('active') === 'on' : true, done: prev ? prev.done : {},
+      active: prev ? fd.get('active') === 'on' : true, remind: normRemind(fd.getAll('remind'), freq), done: prev ? prev.done : {},
       order: prev ? prev.order : S.routines.reduce((a, x) => Math.max(a, x.order), 0) + 1,
       createdAt: prev ? (prev.createdAt || now) : now, updatedAt: now };
     closeSheet();
-    if (putRoutine(r)) toast(prev ? (prev.active && !r.active ? '루틴을 잠시 멈췄어요.' : '루틴을 고쳤어요.') : `매달 ${dayLabel(r)} ‘${r.title}’ 루틴을 만들었어요.`);
+    if (putRoutine(r)) remindToast(prev ? (prev.active && !r.active ? '루틴을 잠시 멈췄어요.' : '루틴을 고쳤어요.') : `${rtWhen(r)} ‘${r.title}’ 루틴을 만들었어요.`, r.active && r.remind.length > 0 && !(prev && prev.remind.length));
   },
   task(f) {
     const fd = new FormData(f), sh = S.sheet, p = pjById(sh.pid);
@@ -2281,6 +2604,39 @@ const acts = {
   'qty-set'(el) { const f = el.closest('form'); f.querySelector('#lg-qty').value = el.dataset.v; logSync(f); },
   install() { doInstall(); },
   'install-hide'() { P.installHide = true; savePrefs(); render(); },
+  'notify-on'() { notifyOn(); },
+  'notify-off'() { notifyOff(); },
+  'notify-test'() { notifyTest(); },
+  /* 미리 알림 직접 추가: 숫자 + 일 전/개월 전 */
+  'rm-add'(el) {
+    const fld = el.closest('.rem-field'), f = el.closest('form'); if (!fld || !f) return;
+    const inp = fld.querySelector('.rm-add input'), u = fld.querySelector('.rm-add select').value, mode = fld.dataset.mode;
+    const n = parseInt(String(inp.value).replace(/[^\d]/g, ''), 10);
+    if (!(n >= 0)) { formErr(f, '며칠(또는 몇 달) 전에 알릴지 숫자로 적어 주세요.', inp.id); return; }
+    const l = `${n}${u}`;
+    if (!remOK(l, mode)) { formErr(f, mode === 'm' ? '매달 루틴은 27일 전까지 고를 수 있어요.' : u === 'm' ? '1~12개월 전까지 고를 수 있어요.' : '365일 전까지 고를 수 있어요.', inp.id); return; }
+    const err = f.querySelector('.form-err'); if (err) err.hidden = true;
+    let box = fld.querySelector(`input[name="remind"][value="${l}"]`);
+    if (!box) {
+      const wrap = fld.querySelector('.rchips'), tmp = document.createElement('div');
+      tmp.innerHTML = remChip(l, true, mode);
+      const node = tmp.firstElementChild, after = [...wrap.children].find(lb => leadDays(lb.querySelector('input').value) > leadDays(l));
+      wrap.insertBefore(node, after || null);
+      box = node.querySelector('input');
+    }
+    box.checked = true; inp.value = '';
+    formSync(f);
+  },
+  /* 오늘 화면 '미리 알림' 닫기 — 이 일정의 지금까지 울린 알림을 모두 '봤음'으로 */
+  'rem-seen'(el) {
+    const g = el.dataset.g, t = today();
+    const keys = remindersBetween(addDays(t, -6), t).filter(x => x.g === g).map(x => x.k);
+    for (const k of keys) P.remSeen[k] = t;
+    const cut = addDays(t, -30);
+    for (const [k, v] of Object.entries(P.remSeen)) { const occ = k.split('|')[2] || ''; if (occ < cut || typeof v !== 'string') delete P.remSeen[k]; }
+    savePrefs(); remMarkShown(keys); render();
+    toast('알림을 닫았어요. 다음 알림 때 다시 보여 드릴게요.');
+  },
   export() { exportBackup(); },
   share() { shareBackup(); },
   import() { if (guard()) $('#imp-file').click(); },
@@ -2318,6 +2674,8 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role="button"][data-act]')) { e.preventDefault(); e.target.click(); }
+  /* 미리 알림 '직접' 칸에서 Enter → 입력 창 저장 대신 [추가] */
+  if (e.key === 'Enter' && e.target.closest && e.target.closest('.rm-add') && e.target.tagName === 'INPUT') { e.preventDefault(); const b = e.target.closest('.rm-add').querySelector('[data-act="rm-add"]'); if (b) b.click(); }
 });
 document.addEventListener('change', e => {
   const el = e.target;
@@ -2327,6 +2685,7 @@ document.addEventListener('change', e => {
   if (f && f.dataset.form === 'log' && el.name === 'trackerId') logSync(f);
   if (f && f.dataset.form === 'tracker') trSync(f);
   if (f && f.dataset.form === 'routine') { if (el.name === 'shift') el.dataset.auto = '0'; rtSync(f); }
+  if (f && f.dataset.form === 'event') evSync(f);
 });
 document.addEventListener('input', e => {
   const el = e.target;
@@ -2443,6 +2802,10 @@ function registerSW() {
     toast('새 버전이 준비됐어요.', { label: '새로 고침', fn: () => location.reload() });
   });
   window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => { /* 무시 */ }); });
+  /* 폰 알림을 누르면 서비스워커가 열려 있는 앱에 '오늘 화면으로' 라고 알려 줌 */
+  navigator.serviceWorker.addEventListener('message', e => {
+    if (e.data && e.data.type === 'open-today') { if (dlg.open) closeSheet(); goTab('today'); }
+  });
 }
 function boot() {
   const st = history.state;
@@ -2452,6 +2815,8 @@ function boot() {
   if (CFG && P.mode !== 'local') startFirebase();
   else startLocal();
   draw();
+  /* 알림을 켜 둔 기기면, 앱이 꺼져 있을 때도 확인하도록 다시 부탁 (설치·권한 상태도 확인) */
+  if (P.notify) bgSync(true).then(s => { S.notif.bg = s; if (S.ui.tab === 'set') render(); });
 }
 boot();
 })();
