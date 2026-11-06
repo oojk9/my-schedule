@@ -5,7 +5,7 @@
           앱이 적어 둔 알림 목록(IndexedDB 'ilsu-remind')에서 오늘 울릴 것을 폰 알림으로 보여 줍니다.
    ※ 기록은 여기가 아니라 '이 기기 저장소' 또는 'Firebase 계정'에 저장돼요.
    ※ 같은 주소(아이디.github.io)의 '내 자산관리' 앱 보관함은 건드리지 않아요. */
-const CACHE = 'ilsu-v1.3.0';
+const CACHE = 'ilsu-v1.4.1';
 const LIB = 'ilsu-lib'; // 연동 기능(Firebase)·글꼴 파일 보관함 — 주소에 버전이 있어서 따로 오래 보관
 const CORE = [
   './',
