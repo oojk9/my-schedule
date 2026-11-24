@@ -1,0 +1,42 @@
+# 나라장터 입찰공고를 매일 아침 한 번 받아 bids/ 폴더에 저장하는 자동 작업
+# (한국 시간 오전 9시 7분, 그리고 Actions 탭에서 'Run workflow'로 언제든지)
+name: 나라장터 공고 받기
+
+on:
+  schedule:
+    - cron: '7 0 * * *'   # UTC 00:07 = 한국 시간 09:07 (정각은 GitHub가 붐벼서 늦어질 수 있어 7분으로)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bids
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 공고 받기
+        env:
+          G2B_KEY: ${{ secrets.G2B_KEY }}       # data.go.kr 인증키 (저장소 Settings → Secrets → G2B_KEY)
+          BIDS_CATS: 물품,용역,공사             # 받을 업무 구분 (외자도 넣으려면 '물품,용역,공사,외자')
+          BIDS_DAYS: 3                          # 오늘부터 며칠 치를 다시 받을지
+          BIDS_KEEP: 14                         # 며칠 치 파일을 남길지
+        run: python3 tools/fetch_bids.py --out bids
+
+      - name: 저장소에 올리기
+        run: |
+          git config user.name "bids-bot"
+          git config user.email "bids-bot@users.noreply.github.com"
+          git add bids
+          if git diff --cached --quiet; then
+            echo "바뀐 공고 없음"
+          else
+            git commit -m "bids: $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') 공고 갱신"
+            git push
+          fi
