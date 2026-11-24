@@ -25,7 +25,7 @@
   --scrim:rgba(12,18,15,.46);
   --shadow:0 1px 2px rgba(20,32,26,.05),0 10px 26px -18px rgba(20,32,26,.28);
   --c-pine:#1B6A52; --c-orange:#BF5419; --c-blue:#2C62C4; --c-violet:#6B48BC;
-  --c-rose:#B93D6A; --c-amber:#9C6700; --c-teal:#0D7A75; --c-slate:#5A6762;
+  --c-rose:#B93D6A; --c-amber:#9C6700; --c-teal:#0D7A75; --c-slate:#5A6762; --c-olive:#66731C;
   --f-display:"Do Hyeon","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
   color-scheme:light;
@@ -35,7 +35,7 @@
     --paper:#0F1412; --dot:#1C2420; --sheet:#171D1A; --sheet-2:#1D2521; --ink:#E5ECE8; --ink-2:#A9B4AE; --ink-3:#76827C; --rule:#2A3430;
     --pine:#52C29A; --on-pine:#0B1913; --pine-wash:#193A2E; --sun:#FF7268; --sat:#7EA8FF; --hl:#6B5816; --danger:#FF7B70;
     --scrim:rgba(0,0,0,.62); --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -18px rgba(0,0,0,.7);
-    --c-pine:#52C29A; --c-orange:#F08C55; --c-blue:#7AA7F7; --c-violet:#AC8FF3; --c-rose:#EF83AA; --c-amber:#E3AA3F; --c-teal:#4FC4BE; --c-slate:#9DABA5;
+    --c-pine:#52C29A; --c-orange:#F08C55; --c-blue:#7AA7F7; --c-violet:#AC8FF3; --c-rose:#EF83AA; --c-amber:#E3AA3F; --c-teal:#4FC4BE; --c-slate:#9DABA5; --c-olive:#BDCB5C;
     color-scheme:dark;
   }
 }
@@ -57,8 +57,9 @@ h1,h2,h3,p,dl,dd{margin:0}
 .sync{margin-left:auto;font-size:12px;color:var(--ink-3);white-space:nowrap}
 .sync.off{color:var(--sun);font-weight:600}
 .gear{flex:none}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:45;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--sheet);border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px);user-select:none;-webkit-user-select:none}
-.tab{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:58px;font-size:11.5px;font-weight:600;color:var(--ink-3);cursor:pointer}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:45;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--sheet);border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px);user-select:none;-webkit-user-select:none}
+.tab{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:58px;font-size:11px;font-weight:600;color:var(--ink-3);cursor:pointer;min-width:0;white-space:nowrap}
+@media (max-width:379px){.tab{font-size:10px;letter-spacing:-.02em}}
 .tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tab[aria-current="page"]{color:var(--pine)}
 .tab[aria-current="page"]::before{content:"";position:absolute;top:-1px;left:32%;right:32%;height:3px;border-radius:0 0 3px 3px;background:var(--pine)}
@@ -463,6 +464,54 @@ body.gated main{padding-block:8px calc(40px + env(safe-area-inset-bottom,0px))}
 .rm-prev .past{color:var(--ink-3)}
 .hint.tight{margin-top:-7px}
 
+/* ---------- 입찰 공고 (나라장터) ---------- */
+.bid-seg{display:flex;gap:6px;flex-wrap:wrap}
+.bid-seg .lchip b{font-weight:700;margin-left:3px;font-variant-numeric:tabular-nums}
+.bid-seg .lchip[aria-pressed="true"] b{color:var(--hl)}
+.bid-src{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;font-size:12.5px;color:var(--ink-3)}
+.bid-src b{color:var(--ink-2);font-weight:600}
+.bid-src .warn{color:var(--sun);font-weight:600}
+.new-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--sun);margin:0 6px 2px 0;vertical-align:middle}
+.row.bid .row-time{align-items:flex-start}
+.row.bid .row-time .dd{font-size:12px}
+.bid-save{color:var(--ink-3)}
+.bid-save svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bid-save:hover{color:var(--pine);background:var(--pine-wash)}
+.bid-cat{display:inline-block;font-size:11.5px;font-weight:700;color:var(--c-olive);border:1px solid currentColor;border-radius:4px;padding:0 5px;line-height:1.45;margin-right:6px;vertical-align:1px}
+.bid-title{font-size:17px;font-weight:700;line-height:1.4;overflow-wrap:anywhere;text-wrap:balance}
+.bid-kv{font-size:13.5px}
+.bid-kv li{gap:16px;align-items:baseline}
+.bid-kv span{flex:none;min-width:64px}
+.bid-kv b{font-weight:500}
+.bid-kv .dd{margin-left:6px}
+.bid-link{align-self:flex-start;text-decoration:none}
+.bid-link svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bid-more{padding:10px 16px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--rule)}
+.bid-late .row-time .dd{color:var(--sun)}
+.chip.bid::before{content:"입";font-size:9px;font-weight:700;color:var(--c);margin-right:3px;vertical-align:1px}
+.up-item .dot.bid{border-radius:2px}
+.legend .lg-bid::before{content:"입";margin-right:4px;font-weight:700;font-size:10px}
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cat-chips label{position:relative;display:block}
+.cat-chips input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.cat-chips span{display:inline-flex;align-items:center;min-height:36px;padding:5px 13px;border:1px solid var(--rule);border-radius:999px;font-size:14px;font-weight:600;background:var(--sheet);cursor:pointer}
+.cat-chips input:checked+span{background:var(--pine);border-color:var(--pine);color:var(--on-pine)}
+.cat-chips input:focus-visible+span{outline:2px solid var(--pine);outline-offset:2px}
+.sheet .field textarea.short{min-height:66px}
+
+/* ---------- 살 것 (사고 싶은 제품) ---------- */
+.want-sort{display:flex;gap:6px;flex-wrap:wrap}
+.row.want .row-btn{grid-template-columns:minmax(62px,auto) minmax(0,1fr)}
+.row-time.price{max-width:96px;align-items:flex-start}
+.row-time.price b{font-size:14px;white-space:nowrap}
+.prio{display:inline-block;font-size:11.5px;font-weight:700;color:var(--c);border:1px solid currentColor;border-radius:4px;padding:0 5px;line-height:1.45;margin-right:6px;vertical-align:1px}
+.want-link{color:var(--ink-3);text-decoration:none}
+.want-link:hover{color:var(--pine);background:var(--pine-wash)}
+.sec-head .sum{font-size:13px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.want-sec h2 .dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.want-done-box{display:flex;flex-direction:column;gap:12px;padding:12px;border:1px dashed var(--rule);border-radius:12px}
+.want-done-box[hidden]{display:none}
+
 /* ---------- settings & login ---------- */
 .set-list{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start}
 .set-card{padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
@@ -566,6 +615,8 @@ body.gated .toast{bottom:calc(28px + env(safe-area-inset-bottom,0px))}
       <button type="button" class="tab" data-act="tab" data-tab="rt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>루틴</button>
       <button type="button" class="tab" data-act="tab" data-tab="rec"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M12 5v14.5M12 12h6M7 11v8.5M3 19.5h18"/></svg>기록</button>
       <button type="button" class="tab" data-act="tab" data-tab="proj"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6.5h10M10 12h10M10 17.5h10"/><path d="M3.5 6.5l1.6 1.6L8 5.2M3.5 12l1.6 1.6L8 10.7"/><circle cx="5.6" cy="17.5" r="1.4"/></svg>프로젝트</button>
+      <button type="button" class="tab" data-act="tab" data-tab="bid"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h8l4 4v13h-12z"/><path d="M14.5 3.5v4h4"/><path d="M9.5 12.5h5M9.5 16h5"/><path d="M9.5 9h2"/></svg>입찰</button>
+      <button type="button" class="tab" data-act="tab" data-tab="want"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/><path d="M9.5 12.5a2.5 2.5 0 0 0 5 0"/></svg>살 것</button>
     </nav>
     <span class="sync" id="sync" role="status"></span>
     <button type="button" class="icon-btn gear" id="gear" data-act="tab" data-tab="set" aria-label="설정"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -579,6 +630,8 @@ body.gated .toast{bottom:calc(28px + env(safe-area-inset-bottom,0px))}
   <section class="view" id="v-rt" aria-label="루틴" hidden></section>
   <section class="view" id="v-rec" aria-label="근무·횟수 기록" hidden></section>
   <section class="view" id="v-proj" aria-label="프로젝트" hidden></section>
+  <section class="view" id="v-bid" aria-label="입찰 공고" hidden></section>
+  <section class="view" id="v-want" aria-label="사고 싶은 것" hidden></section>
   <section class="view" id="v-set" aria-label="설정" hidden></section>
   <section class="view" id="v-auth" aria-label="로그인" hidden></section>
   <section class="view" id="v-err" aria-label="오류" hidden></section>
@@ -591,11 +644,12 @@ body.gated .toast{bottom:calc(28px + env(safe-area-inset-bottom,0px))}
 <input type="file" id="imp-file" accept=".json,.txt,application/json,text/plain" hidden>
 
 <script src="config.js"></script>
+<script src="bid-match.js"></script>
 <script>
 (() => {
 'use strict';
 
-const APP_VERSION = '1.4.1';
+const APP_VERSION = '1.6.0';
 const FB_VER = '12.11.0';
 const LS_DATA = 'ilsu.data.v1';
 const LS_PREFS = 'ilsu.prefs.v1';
@@ -638,7 +692,23 @@ const PALETTE = ['pine', 'orange', 'blue', 'violet', 'rose', 'amber', 'teal', 's
 const PNAME = { pine: '초록', orange: '주황', blue: '파랑', violet: '보라', rose: '분홍', amber: '노랑', teal: '청록', slate: '회색' };
 const STATUS = { active: '진행 중', plan: '준비', hold: '보류', done: '완료' };
 const EMPTY_TOT = { qty: 0, pay: 0, days: new Set() };
-const TABS = ['today', 'cal', 'rt', 'rec', 'proj', 'set'];
+const TABS = ['today', 'cal', 'rt', 'rec', 'proj', 'bid', 'want', 'set'];
+
+/* 살 것 — 사고 싶은 제품 목록 (wants 컬렉션). 우선순위 1 꼭 사기 · 2 사고 싶음 · 3 나중에 */
+const WANT_PRIO = { 1: { label: '꼭 사기', short: '꼭', color: 'rose' }, 2: { label: '사고 싶음', short: '보통', color: 'pine' }, 3: { label: '나중에', short: '나중', color: 'slate' } };
+const WANT_KEYS = ['name', 'price', 'url', 'shop', 'prio', 'cat', 'memo', 'done', 'doneAt', 'paid', 'order', 'createdAt', 'updatedAt'];
+const WANT_SORTS = [['prio', '우선순위'], ['price-desc', '비싼 순'], ['price-asc', '싼 순'], ['new', '최근 적은 순']];
+
+/* 나라장터 입찰 공고 — 공고 파일(bids/*.json)은 GitHub Actions(tools/fetch_bids.py)가 하루 4번 받아 두고,
+   조건 맞추기(bid-match.js)는 앱과 서비스워커가 같이 씀. 저장한 입찰은 bids 컬렉션, 조건은 settings/bids 문서에 (PC·폰 공통) */
+const BM = window.BidMatch || null;
+const BID_FIELDS = ['n', 'o', 'c', 't', 'i', 'd', 'p', 'e', 'g', 'b', 'q', 'k', 'm', 'w', 'u', 'r', 'l', 's'];
+const BID_KEYS = [...BID_FIELDS, 'st', 'remind', 'memo', 'done', 'createdAt', 'updatedAt'];
+const BID_COLOR = 'olive';
+const BID_DEF_REMIND = ['3d'];
+const FEED_DAYS = 14;        /* 공고 파일을 최근 며칠 치까지 읽을지 */
+const FEED_MAX_ROWS = 150;   /* 새 공고 목록에 한 번에 보여 줄 최대 줄 수 */
+const CFG_KEYS = ['cats', 'kw', 'ex', 'lic', 'region', 'inst', 'min', 'max'];
 
 /* 루틴 (매달·매년) */
 const RT_KINDS = { pay: { label: '결제·납부', color: 'rose' }, save: { label: '저축·적금', color: 'blue' }, income: { label: '들어오는 돈', color: 'pine' }, etc: { label: '기타', color: 'amber' } };
@@ -705,7 +775,13 @@ const ICON = {
   up: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14.5l6-6 6 6"/></svg>',
   down: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>',
   grip: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>',
-  bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 2H4.4z"/><path d="M9.8 20.5a2.3 2.3 0 0 0 4.4 0"/></svg>'
+  bell: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 2H4.4z"/><path d="M9.8 20.5a2.3 2.3 0 0 0 4.4 0"/></svg>',
+  save: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1v16l-6-3.6-6 3.6v-16a1 1 0 0 1 1-1z"/></svg>',
+  hide: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.7a2 2 0 0 0 2.8 2.8"/><path d="M9.4 5.3A10.5 10.5 0 0 1 12 5c5 0 8.5 4 9.6 7-.4 1-1.1 2.2-2.1 3.3M6.6 6.7C4.4 8.1 3 10.2 2.4 12c1.1 3 4.6 7 9.6 7 1.7 0 3.2-.4 4.5-1.1"/></svg>',
+  ext: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.5h5.5V10"/><path d="M19.5 4.5L11 13"/><path d="M17 13.5v5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h5"/></svg>',
+  filter: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 3.5V9h-5.5"/></svg>',
+  bag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/><path d="M9.5 12.5a2.5 2.5 0 0 0 5 0"/></svg>'
 };
 
 const curY = () => new Date().getFullYear();
@@ -721,8 +797,12 @@ function buzz() { try { if (navigator.vibrate) navigator.vibrate(12); } catch (e
 
 /* ================= 설정값 ================= */
 function loadPrefs() { try { return JSON.parse(localStorage.getItem(LS_PREFS) || '{}') || {}; } catch (e) { return {}; } }
-const P = Object.assign({ layers: { ev: true, rt: true, log: true, proj: true }, mode: '', installHide: false, migrateHide: false }, loadPrefs());
-P.layers = Object.assign({ ev: true, rt: true, log: true, proj: true }, P.layers || {});
+const P = Object.assign({ layers: { ev: true, rt: true, log: true, proj: true, bid: true }, mode: '', installHide: false, migrateHide: false }, loadPrefs());
+P.layers = Object.assign({ ev: true, rt: true, log: true, proj: true, bid: true }, P.layers || {});
+/* 입찰: 새 공고 폰 알림(이 기기), 새 공고 목록에서 이미 본 공고(새로 올라온 것에 점 표시용) */
+P.bidNotify = P.bidNotify !== false;
+P.bidSeen = objOr(P.bidSeen);
+P.wantSort = WANT_SORTS.some(([k]) => k === P.wantSort) ? P.wantSort : 'prio';
 /* 프로젝트 묶음 펼침 상태 (이 기기에만 기억) */
 P.pjOpen = Object.assign({ active: true, plan: true, hold: true, done: false }, objOr(P.pjOpen));
 /* 미리 알림: 이 기기에서 폰 알림 받기, 오늘 화면에서 닫은 알림 */
@@ -754,17 +834,21 @@ const S = {
   authMode: 'login', authBusy: false, authErr: '', authInfo: '',
   listenErr: '', localCount: 0, migrating: false,
   trackers: [], projects: [], routines: [], months: new Map(),
-  loaded: { trackers: false, projects: false, routines: false, months: false },
+  bids: [], bidCfg: BM ? BM.normFilters({}) : null, bidCfgSet: false, wants: [],
+  loaded: { trackers: false, projects: false, routines: false, months: false, bids: false, settings: false, wants: false },
   range: { from: addMonths(ymOf(T0), -11), to: addMonths(ymOf(T0), 12) },
   sheet: null,
   notif: { bg: '' }, /* 앱이 꺼져 있을 때 알림: '' 확인 전 · on · no-install · unsupported */
+  /* 나라장터 공고 파일(bids/*.json) 읽은 결과 — 기록이 아니라 그때그때 받아 옴. st: idle · loading · ok · none(파일 없음) · err */
+  feed: { st: 'idle', items: [], updated: '', days: 0, errors: 0, err: '', at: 0 },
   ui: {
     tab: TABS.includes(h0) ? h0 : 'today', calYm: ymOf(T0), sel: T0, recYm: ymOf(T0), rtYm: ymOf(T0),
-    layers: P.layers, proj: null, pjSort: false, pjMoved: null, rtOffOpen: false, openLogs: {}, drafts: {}, press: null
+    layers: P.layers, proj: null, pjSort: false, pjMoved: null, rtOffOpen: false, openLogs: {}, drafts: {}, press: null,
+    bidView: 'new', bidFresh: null, bidDoneOpen: false, wantDoneOpen: false
   }
 };
 
-const RAW = { trackers: new Map(), projects: new Map(), routines: new Map(), months: new Map() };
+const RAW = { trackers: new Map(), projects: new Map(), routines: new Map(), months: new Map(), bids: new Map(), settings: new Map(), wants: new Map() };
 
 function normTracker(id, r) {
   const name = str(r.name, 40).trim() || '이름 없는 항목';
@@ -821,6 +905,45 @@ function rebuildRoutines() { S.routines = [...RAW.routines].map(([id, r]) => nor
 function rebuildTrackers() { S.trackers = [...RAW.trackers].map(([id, r]) => normTracker(id, objOr(r))).sort((a, b) => a.order - b.order || a.createdAt - b.createdAt); }
 function rebuildProjects() { S.projects = [...RAW.projects].map(([id, r]) => normProject(id, objOr(r))).sort(pjCmp); }
 function rebuildMonths() { const m = new Map(); for (const [ym, r] of RAW.months) if (/^\d{4}-\d{2}$/.test(ym)) m.set(ym, parseMonth(ym, r)); S.months = m; }
+
+/* 저장한 입찰 한 건 — 공고 내용(BID_FIELDS, 공고 파일에서 복사)과 내 표시(st: saved 저장함·hidden 숨김, remind 마감 미리 알림, memo, done 참여·제출 끝) */
+function normBid(id, r) {
+  const o = { id };
+  for (const k of BID_FIELDS) o[k] = k === 'b' || k === 'q' ? Math.max(0, Math.round(num(typeof r[k] === 'string' ? digits(r[k]) : r[k]))) : str(r[k], k === 'u' ? 600 : k === 't' || k === 'r' || k === 'l' ? 300 : 120).trim();
+  o.t = o.t || '(공고명 없음)'; o.o = o.o || '00';
+  if (BM && !BM.BID_CATS.includes(o.c)) o.c = o.c || '기타';
+  return Object.assign(o, { st: r.st === 'hidden' ? 'hidden' : 'saved', remind: normRemind(r.remind, 'e'), memo: str(r.memo, 500), done: !!r.done, createdAt: num(r.createdAt), updatedAt: num(r.updatedAt) });
+}
+/* 마감 'YYYY-MM-DD HH:MM' → 날짜·시각 */
+const bidDate = b => { const d = String(b && b.e || '').slice(0, 10); return isDate(d) ? d : ''; };
+const bidTime = b => { const t = String(b && b.e || '').slice(11, 16); return isTime(t) ? t : ''; };
+const bidCmp = (a, b) => (a.e || '9') < (b.e || '9') ? -1 : (a.e || '9') > (b.e || '9') ? 1 : a.createdAt - b.createdAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+function rebuildBids() { S.bids = [...RAW.bids].map(([id, r]) => normBid(id, objOr(r))).sort(bidCmp); }
+/* 사고 싶은 제품 한 건 */
+function normWant(id, r) {
+  const url = str(r.url, 500).trim();
+  return { id, name: str(r.name, 80).trim() || '(이름 없음)', price: Math.max(0, Math.round(num(r.price))), url: /^https?:\/\//i.test(url) ? url : '', shop: str(r.shop, 40).trim(),
+    prio: WANT_PRIO[+r.prio] ? +r.prio : 2, cat: str(r.cat, 20).trim(), memo: str(r.memo, 300).trim(), done: !!r.done, doneAt: isDate(r.doneAt) ? r.doneAt : '',
+    paid: Math.max(0, Math.round(num(r.paid))), order: num(r.order), createdAt: num(r.createdAt), updatedAt: num(r.updatedAt) };
+}
+const wantCmp = (a, b) => a.prio - b.prio || a.order - b.order || a.createdAt - b.createdAt || (a.id < b.id ? -1 : 1);
+function rebuildWants() { S.wants = [...RAW.wants].map(([id, r]) => normWant(id, objOr(r))).sort(wantCmp); }
+const wantById = id => S.wants.find(w => w.id === id);
+const wantNextOrder = () => S.wants.reduce((a, w) => Math.max(a, w.order), 0) + 1;
+function rebuildSettings() { const raw = RAW.settings.get('bids'); S.bidCfgSet = !!(raw && typeof raw === 'object'); S.bidCfg = BM ? BM.normFilters(objOr(raw)) : null; }
+const bidById = id => S.bids.find(b => b.id === id);
+/* 금액 짧게: 1억 2,000만원 → "1.2억원", 3,500만원 → "3,500만원" */
+function wonShort(n) {
+  n = Math.round(num(n)); if (!n) return '';
+  if (n >= 1e8) { const v = n / 1e8; return `${v >= 10 ? Math.round(v).toLocaleString('ko-KR') : (Math.round(v * 10) / 10).toLocaleString('ko-KR')}억원`; }
+  if (n >= 1e6) return `${Math.round(n / 1e4).toLocaleString('ko-KR')}만원`;
+  if (n >= 1e4) { const v = Math.round(n / 1e3) / 10; return `${v.toLocaleString('ko-KR')}만원`; } /* 12.9만원 */
+  return won(n);
+}
+const bidAmt = b => b.q ? `추정 ${wonShort(b.q)}` : b.b ? `예산 ${wonShort(b.b)}` : '';
+const nowStamp = () => { const d = new Date(); return `${ymd(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+/* '2026-11-20 14:00' → '11월 20일 (금) 오후 2:00' */
+function fmtStamp(s) { const d = String(s || '').slice(0, 10), t = String(s || '').slice(11, 16); if (!isDate(d)) return s ? esc(s) : ''; return fmtMD(d) + (isTime(t) ? ' ' + fmtTime(t) : ''); }
 
 const trById = id => S.trackers.find(t => t.id === id);
 const pjById = id => S.projects.find(p => p.id === id);
@@ -879,6 +1002,16 @@ function remindersBetween(from, to) {
       }
     }
   }
+  /* 저장한 입찰: 마감일 기준 (참여·제출을 끝냈으면 안 울림) */
+  for (const b of S.bids) {
+    if (b.st !== 'saved' || b.done || !b.remind.length) continue;
+    const d = bidDate(b);
+    if (!d || d < from) continue;
+    for (const l of b.remind) {
+      const f = fireDate(d, l);
+      if (f >= from && f <= to) out.push({ k: `b|${b.id}|${d}|${l}`, g: `b|${b.id}|${d}`, kind: 'bid', id: b.id, ym: '', occ: d, fire: f, lead: l, title: b.t, amount: 0, time: bidTime(b), c: BID_COLOR, yearly: false, note: '입찰 마감' });
+    }
+  }
   return out.sort((a, b) => a.fire < b.fire ? -1 : a.fire > b.fire ? 1 : a.occ < b.occ ? -1 : a.occ > b.occ ? 1 : 0);
 }
 /* 같은 일정에 여러 알림이 울렸으면 가장 최근 것 하나만 */
@@ -929,7 +1062,10 @@ function derive() {
     for (let ym = addMonths(S.range.from, -1); ym <= last; ym = addMonths(ym, 1))
       for (const r of S.routines) { const o = routineOcc(r, ym); if (o) push(rtByDate, o.date, o); }
   }
-  return { evByDate, logByDate, taskByDate, dueByDate, startByDate, rtByDate, tot, evByProj,
+  /* 저장한 입찰의 마감일 (끝낸 건 빼고) */
+  const bidByDate = new Map();
+  for (const b of S.bids) { const d = bidDate(b); if (b.st === 'saved' && !b.done && d) push(bidByDate, d, b); }
+  return { evByDate, logByDate, taskByDate, dueByDate, startByDate, rtByDate, bidByDate, tot, evByProj,
     trMap: new Map(S.trackers.map(t => [t.id, t])), pjMap: new Map(S.projects.map(p => [p.id, p])) };
 }
 const sortEv = arr => arr.slice().sort((a, b) => (a.time || '') < (b.time || '') ? -1 : (a.time || '') > (b.time || '') ? 1 : a.createdAt - b.createdAt);
@@ -948,6 +1084,7 @@ function dayItems(date, opt = {}) {
     for (const p of D.dueByDate.get(date) || []) out.push({ k: 'due', p, s: '0b' });
     for (const x of D.taskByDate.get(date) || []) { if (opt.skipDone && x.t.done) continue; out.push({ k: 'task', p: x.p, t: x.t, s: '0c' }); }
   }
+  if (!opt.noBid) for (const b of D.bidByDate.get(date) || []) out.push({ k: 'bid', b, s: '0e' + bidTime(b) });
   if (!opt.noLogs) for (const l of D.logByDate.get(date) || []) { if (D.trMap.has(l.trackerId)) out.push({ k: 'log', l, s: '2' }); }
   return out.sort((a, b) => a.s < b.s ? -1 : a.s > b.s ? 1 : 0);
 }
@@ -1007,6 +1144,13 @@ function rowHTML(it, opt = {}) {
     const sub = [l.pay ? won(l.pay) : '', l.memo ? esc(l.memo) : ''].filter(Boolean).join(' · ') || '근무·횟수 기록';
     return `<li class="row" style="--c:var(--c-${tr.color})"><button type="button" class="row-btn" data-act="open-log" data-id="${l.id}" data-ym="${l.ym}"><span class="row-time"><b>기록</b></span><span class="row-main"><span class="row-title">${esc(tr.name)} ${qtyText(l.qty, tr.unit)}</span><span class="row-sub">${sub}</span></span></button><span class="row-end">${stamp(tr, l.date + '|' + tr.id)}</span></li>`;
   }
+  if (it.k === 'bid') {
+    /* 저장한 입찰: 체크 = 참여(제출)를 끝냄 → 알림이 멈추고 '끝낸 입찰'로 */
+    const b = it.b, d = bidDate(b), tm = bidTime(b), t = today();
+    const time = !d ? '<span class="row-time"><b>마감</b>미정</span>' : opt.showDate ? lead(d) : `<span class="row-time">${tm ? timeHTML(tm) : '<b>마감</b>'}</span>`;
+    const sub = [`<b class="kind">입찰 마감</b>`, opt.showDate && tm ? fmtTime(tm) : '', b.i ? esc(b.i) : '', bidAmt(b), b.done ? '' : remTag(b.remind)].filter(Boolean).join(' · ');
+    return `<li class="row bid${b.done ? ' is-done' : ''}${d && d < t && !b.done ? ' bid-late' : ''}" style="--c:var(--c-${BID_COLOR})"><button type="button" class="row-btn" data-act="open-bid" data-id="${b.id}">${time}<span class="row-main"><span class="row-title"><span class="bid-cat">${esc(b.c)}</span>${esc(b.t)}</span><span class="row-sub">${sub}</span></span></button>${chk('bid', b.done, `data-id="${b.id}"`, `${b.t} 참여 끝`)}</li>`;
+  }
   return '';
 }
 function listCard(items, empty, opt) {
@@ -1046,8 +1190,8 @@ function remindHTML(t) {
 }
 function remRow(x, t) {
   const n = diff(t, x.occ);
-  const open = x.kind === 'rt' ? `data-act="open-routine" data-id="${x.id}"` : `data-act="open-event" data-id="${x.id}" data-ym="${x.ym}"`;
-  const sub = [`<b class="kind">${leadLong(x.lead)} 알림</b>`, fmtMD(x.occ) + (x.time ? ' ' + fmtTime(x.time) : ''), x.amount ? won(x.amount) : ''].filter(Boolean).join(' · ');
+  const open = x.kind === 'rt' ? `data-act="open-routine" data-id="${x.id}"` : x.kind === 'bid' ? `data-act="open-bid" data-id="${x.id}"` : `data-act="open-event" data-id="${x.id}" data-ym="${x.ym}"`;
+  const sub = [`<b class="kind">${leadLong(x.lead)} 알림</b>`, fmtMD(x.occ) + (x.time ? ' ' + fmtTime(x.time) : '') + (x.note ? ' ' + x.note : ''), x.amount ? won(x.amount) : ''].filter(Boolean).join(' · ');
   return `<li class="row rem" style="--c:var(--c-${x.c})"><button type="button" class="row-btn" ${open} aria-label="${esc(x.title)}, ${n}일 남음"><span class="row-time"><b class="rem-dd">D-${n}</b></span><span class="row-main"><span class="row-title">${x.kind === 'rt' ? `<span class="rt-ic">${ICON.repeat}</span>` : ''}${esc(x.title)}</span><span class="row-sub">${sub}</span></span></button><button type="button" class="icon-btn sm rem-x" data-act="rem-seen" data-g="${esc(x.g)}" aria-label="${esc(x.title)} 알림 닫기">${ICON.x}</button></li>`;
 }
 function upItem(it) {
@@ -1055,6 +1199,7 @@ function upItem(it) {
   if (it.k === 'ev') { const e = it.e; return `<li><button type="button" class="up-item" data-act="open-event" data-id="${e.id}" data-ym="${e.ym}" style="--c:var(--c-${KINDS[e.kind].color})"><i class="dot"></i>${e.time ? `<span class="t">${fmtTime(e.time)}</span>` : ''}<span class="n">${esc(e.title)}</span></button></li>`; }
   if (it.k === 'task') return `<li><button type="button" class="up-item" data-act="open-project" data-id="${it.p.id}" style="--c:var(--c-${it.p.color})"><i class="dot sq"></i><span class="n">${esc(it.t.text)}</span><span class="t">${esc(it.p.name)}</span></button></li>`;
   if (it.k === 'due') return `<li><button type="button" class="up-item" data-act="open-project" data-id="${it.p.id}" style="--c:var(--c-${it.p.color})"><i class="dot dia"></i><span class="n">${esc(it.p.name)} 목표일</span></button></li>`;
+  if (it.k === 'bid') { const b = it.b, tm = bidTime(b); return `<li><button type="button" class="up-item" data-act="open-bid" data-id="${b.id}" style="--c:var(--c-${BID_COLOR})"><i class="dot bid"></i><span class="t">${tm ? fmtTime(tm) + ' ' : ''}마감</span><span class="n">${esc(b.t)}</span></button></li>`; }
   return '';
 }
 function upcomingHTML(t) {
@@ -1130,6 +1275,7 @@ function viewCal() {
       for (const p of D.dueByDate.get(d) || []) chips.push(`<span class="chip due" style="--c:var(--c-${p.color})">${esc(p.name)}</span>`);
       for (const x of D.taskByDate.get(d) || []) chips.push(`<span class="chip task${x.t.done ? ' done' : ''}" style="--c:var(--c-${x.p.color})">${esc(x.t.text)}</span>`);
     }
+    if (L.bid) for (const b of D.bidByDate.get(d) || []) chips.push(`<span class="chip bid" style="--c:var(--c-${BID_COLOR})">${bidTime(b) ? `<span class="ct">${bidTime(b)}</span>` : ''}${esc(b.t)}</span>`);
     let st = '', worked = false;
     if (L.log) {
       const seen = new Map();
@@ -1141,8 +1287,9 @@ function viewCal() {
     const label = [fmtMD(d), hol, n ? `일정 ${n}개` : '', worked ? '기록 있음' : ''].filter(Boolean).join(', ');
     cells += `<button type="button" id="cd-${d}" class="${cls}" data-act="cal-day" data-date="${d}" aria-pressed="${d === S.ui.sel}" aria-label="${esc(label)}"><span class="cd-top"><span class="dn">${dt.getDate()}</span>${hol ? `<span class="hn">${esc(hol)}</span>` : ''}${st ? `<span class="stamps">${st}</span>` : ''}</span>${n ? `<span class="chips">${chips.slice(0, 4).join('')}</span>` : ''}${n > 2 ? `<span class="more s">+${n - 2}</span>` : ''}${n > 4 ? `<span class="more l">+${n - 4}</span>` : ''}</button>`;
   }
-  const layers = [['ev', '일정'], ['rt', '루틴'], ['log', '근무·횟수 도장'], ['proj', '프로젝트']].map(([k, lab]) => `<button type="button" class="lchip" data-act="layer" data-layer="${k}" aria-pressed="${!!L[k]}">${lab}</button>`).join('');
-  const legend = Object.values(KINDS).map(K => `<span><i style="--c:var(--c-${K.color})"></i>${K.label}</span>`).join('') + '<span class="lg-rt">루틴</span>';
+  const useBid = S.bids.length > 0 || S.bidCfgSet;
+  const layers = [['ev', '일정'], ['rt', '루틴'], ['log', '근무·횟수 도장'], ['proj', '프로젝트'], ...(useBid ? [['bid', '입찰 마감']] : [])].map(([k, lab]) => `<button type="button" class="lchip" data-act="layer" data-layer="${k}" aria-pressed="${!!L[k]}">${lab}</button>`).join('');
+  const legend = Object.values(KINDS).map(K => `<span><i style="--c:var(--c-${K.color})"></i>${K.label}</span>`).join('') + '<span class="lg-rt">루틴</span>' + (useBid ? `<span class="lg-bid" style="--c:var(--c-${BID_COLOR})">입찰 마감</span>` : '');
   return `<div class="cal-layout">
     <div class="card cal-card">
       <div class="cal-head"><h1 class="cal-title"><b>${m}월</b><span>${y}년</span></h1><div class="cal-nav">${ym !== ymOf(t) ? `<button type="button" class="btn sm" data-act="cal-today">오늘</button>` : ''}<button type="button" class="icon-btn" data-act="cal-prev" aria-label="이전 달">${ICON.prev}</button><button type="button" class="icon-btn" data-act="cal-next" aria-label="다음 달">${ICON.next}</button></div></div>
@@ -1412,6 +1559,8 @@ function viewSet() {
         <li><span>루틴</span><b>${S.routines.length}개${nYear ? ` (매년·몇 년마다 ${nYear}개)` : ''}</b></li>
         <li><span>항목 · 프로젝트</span><b>${S.trackers.length}개 · ${S.projects.length}개</b></li>
         <li><span>불러온 일정·기록</span><b>${n}건</b></li>
+        <li><span>저장한 입찰</span><b>${S.bids.filter(b => b.st === 'saved').length}건${S.bidCfgSet ? ' · 조건 있음' : ''}</b></li>
+        <li><span>사고 싶은 것</span><b>${S.wants.filter(w => !w.done).length}개${S.wants.some(w => w.done) ? ` · 산 것 ${S.wants.filter(w => w.done).length}개` : ''}</b></li>
         <li><span>공휴일 정보</span><b>2026–2027년</b></li>
         <li><span>버전</span><b>v${APP_VERSION}</b></li>
       </ul>
@@ -1429,7 +1578,7 @@ function notifyCard() {
   const head = `<h2>미리 알림 ${on ? '<span class="pill st-active">켜짐</span>' : '<span class="pill st-plan">꺼짐</span>'}</h2>`;
   if (perm === 'unsupported') return head + '<p>이 브라우저는 알림을 보내지 못해요. 미리 알림은 앱을 열 때 <b>오늘</b> 화면 맨 위에 보여 드려요.</p>' + nextLine;
   if (perm === 'denied') return head + `<p>이 기기에서 알림이 <b>차단</b>되어 있어요. 폰 <b>설정 → 애플리케이션 → 일정수첩</b>(없으면 <b>Chrome</b>) <b>→ 알림</b>을 허용한 뒤 아래 버튼을 눌러 주세요.</p>${nextLine}<div class="set-acts"><button type="button" class="btn sm" data-act="notify-on">다시 확인</button></div>`;
-  if (!on) return head + `<p>루틴·일정에 정해 둔 <b>미리 알림</b>(예: 3개월 전, D-7)을 폰 알림으로 받아요. 켜는 건 <b>이 기기에서만</b>이에요. PC와 폰 둘 다 받으려면 각각 켜 주세요.</p>${nextLine}<div class="set-acts"><button type="button" class="btn sm primary" data-act="notify-on">${ICON.bell}알림 켜기</button></div>`;
+  if (!on) return head + `<p>루틴·일정·저장한 입찰에 정해 둔 <b>미리 알림</b>(예: 3개월 전, D-7, 입찰 마감 3일 전)과 조건에 맞는 <b>새 입찰 공고</b>를 폰 알림으로 받아요. 켜는 건 <b>이 기기에서만</b>이에요. PC와 폰 둘 다 받으려면 각각 켜 주세요.</p>${nextLine}<div class="set-acts"><button type="button" class="btn sm primary" data-act="notify-on">${ICON.bell}알림 켜기</button></div>`;
   const bg = S.notif.bg;
   const how = bg === 'on' ? '앱이 꺼져 있어도 크롬이 <b>하루에 한두 번</b> 확인해서 알려 드려요. 날짜는 맞지만 몇 시에 올지는 정할 수 없어요.'
     : bg === 'no-install' ? '<b>설치한 앱(홈 화면 아이콘)</b>으로 열어야 앱이 꺼져 있을 때도 알림이 와요. 지금은 앱을 열 때 오늘 화면에 보여 드려요.'
@@ -1437,6 +1586,245 @@ function notifyCard() {
     : '알림 준비 상태를 확인하는 중이에요…';
   return head + `<p>${how}</p>${nextLine}<div class="set-acts"><button type="button" class="btn sm" data-act="notify-test">시험 알림 보내기</button><button type="button" class="btn sm" data-act="notify-off">끄기</button></div>`;
 }
+
+/* ----- 입찰 공고 (나라장터) -----
+   공고 파일(bids/index.json → bids/날짜.json)은 GitHub Actions가 받아 두고, 여기서는 읽어서 조건에 맞는 것만 보여 줌.
+   조건(settings/bids)과 저장·숨김(bids/공고번호-차수)은 계정에 저장되어 PC·폰이 같음. */
+async function bidsLoad(force) {
+  const f = S.feed;
+  if (!BM || f.st === 'loading') return;
+  if (!force && f.at && Date.now() - f.at < 5 * 60e3) return; /* 5분 안에는 다시 받지 않음 */
+  f.st = 'loading'; f.err = ''; render();
+  try {
+    const res = await fetch('./bids/index.json', { cache: 'no-cache' });
+    if (res.status === 404) { f.st = 'none'; f.items = []; f.days = 0; f.at = Date.now(); render(); bidsAfterLoad(); return; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const idx = await res.json();
+    const days = Object.entries(objOr(idx.days)).filter(([d]) => isDate(d)).sort((a, b) => a[0] < b[0] ? 1 : -1).slice(0, FEED_DAYS);
+    const lists = await Promise.all(days.map(async ([d, m]) => {
+      try {
+        /* 파일마다 ?v=갱신시각 — 바뀌지 않은 날짜 파일은 서비스워커가 보관한 것을 그대로 써서 데이터를 아껴요 */
+        const r = await fetch(`./bids/${d}.json?v=${encodeURIComponent(str(m && m.v, 40))}`);
+        if (!r.ok) return [];
+        const j = await r.json();
+        return Array.isArray(j.items) ? j.items : [];
+      } catch (e) { return []; }
+    }));
+    const seen = new Set(), items = [];
+    for (const arr of lists) for (const it of arr) {
+      if (!it || typeof it !== 'object' || !it.n) continue;
+      const k = BM.bidKey(it); if (seen.has(k) || !validId(k)) continue;
+      seen.add(k); items.push(Object.assign({ id: k }, it));
+    }
+    items.sort((a, b) => (a.p || '') > (b.p || '') ? -1 : (a.p || '') < (b.p || '') ? 1 : 0); /* 최근 게시 먼저 */
+    f.items = items; f.updated = str(idx.updated, 40); f.days = days.length; f.errors = Array.isArray(idx.errors) ? idx.errors.length : 0; f.st = 'ok'; f.at = Date.now();
+    /* 공고 파일에서 사라진(오래된) 공고는 '본 공고' 목록에서도 정리 */
+    for (const k of Object.keys(P.bidSeen)) if (!seen.has(k)) delete P.bidSeen[k];
+    savePrefs();
+  } catch (e) { f.st = f.items.length ? 'ok' : 'err'; f.err = String((e && e.message) || e); f.at = Date.now(); }
+  render(); bidsAfterLoad();
+}
+/* 새 공고: 조건에 맞고, 저장·숨김하지 않았고, 마감이 지나지 않은 것 */
+function bidMatches() {
+  if (!BM || !S.bidCfg || !BM.hasFilters(S.bidCfg)) return [];
+  const acted = new Set(S.bids.map(b => b.id)), now = nowStamp();
+  return S.feed.items.filter(it => !acted.has(it.id) && (!it.e || it.e >= now) && BM.bidMatch(it, S.bidCfg));
+}
+/* 입찰 화면에 들어오면: 지난번에 못 본 공고에 점을 찍고, 지금 보이는 공고는 '봤음'으로 */
+function bidTabEnter() {
+  bidsLoad();
+  if (S.phase !== 'ready' || S.feed.st === 'loading' || S.feed.st === 'idle') return;
+  const fresh = S.ui.bidFresh || new Set();
+  let changed = false;
+  for (const it of bidMatches()) { if (!P.bidSeen[it.id]) { fresh.add(it.id); P.bidSeen[it.id] = 1; changed = true; } }
+  S.ui.bidFresh = fresh;
+  if (changed) { savePrefs(); remQueue(); }
+}
+function bidsAfterLoad() { if (S.ui.tab === 'bid') { bidTabEnter(); render(); } remQueue(); }
+const feedItem = id => S.feed.items.find(it => it.id === id);
+
+function feedStatus() {
+  const f = S.feed;
+  if (f.st === 'loading' && !f.items.length) return '<span>공고를 불러오는 중…</span>';
+  if (f.st === 'none') return '<span class="warn">아직 받아 둔 공고 파일이 없어요.</span>';
+  if (f.st === 'err') return `<span class="warn">공고를 불러오지 못했어요${navigator.onLine ? '' : ' (오프라인)'}.</span>`;
+  if (f.st !== 'ok') return '';
+  const up = f.updated ? fmtStamp(f.updated.replace('T', ' ')) : '';
+  return `<span>나라장터 공고 <b>${f.days}일 치 ${f.items.length.toLocaleString('ko-KR')}건</b></span>${up ? `<span>받은 시각 <b>${up}</b></span>` : ''}${f.errors ? '<span class="warn">일부 종류는 받지 못했어요 (Actions 기록 확인)</span>' : ''}`;
+}
+function cfgSummary(c) {
+  const part = (lab, arr) => arr.length ? `<span>${lab} <b>${arr.map(esc).join(', ')}</b></span>` : '';
+  return [part('종류', c.cats.length === BM.BID_CATS.length ? ['전체'] : c.cats), part('키워드', c.kw), part('제외', c.ex), part('업종·면허', c.lic), part('지역', c.region), part('기관', c.inst),
+    c.min || c.max ? `<span>금액 <b>${c.min ? wonShort(c.min) : ''} ~ ${c.max ? wonShort(c.max) : ''}</b></span>` : ''].filter(Boolean).join('');
+}
+/* 새 공고 한 줄 (아직 저장하지 않은 공고 파일의 항목) */
+function feedRow(it) {
+  const d = bidDate(it), tm = bidTime(it), t = today(), fresh = S.ui.bidFresh && S.ui.bidFresh.has(it.id);
+  let time;
+  if (d) { const n = diff(t, d), dt = pd(d); time = `<span class="row-time"><b>${dt.getMonth() + 1}.${pad(dt.getDate())}</b><small>마감${tm ? ' ' + tm : ''}</small><span class="dd${n <= 3 ? ' late' : ''}">${dday(d)}</span></span>`; }
+  else time = '<span class="row-time"><b>마감</b>미정</span>';
+  const sub = [it.i ? esc(it.i) : '', it.d && it.d !== it.i ? esc(it.d) : '', bidAmt(it), it.k && !/일반/.test(it.k) ? `<b class="kind">${esc(it.k)}</b>` : '', it.p ? `게시 ${esc(String(it.p).slice(5, 10).replace('-', '.'))}` : ''].filter(Boolean).join(' · ');
+  return `<li class="row bid" style="--c:var(--c-${BID_COLOR})"><button type="button" class="row-btn" data-act="open-bid" data-id="${esc(it.id)}">${time}<span class="row-main"><span class="row-title">${fresh ? '<i class="new-dot" aria-label="새로 올라옴"></i>' : ''}<span class="bid-cat">${esc(it.c)}</span>${esc(it.t)}</span><span class="row-sub">${sub}</span></span></button>${canWrite() ? `<span class="row-end"><button type="button" class="icon-btn sm bid-save" data-act="bid-save" data-id="${esc(it.id)}" aria-label="${esc(it.t)} 저장">${ICON.save}</button></span>` : ''}</li>`;
+}
+function viewBid() {
+  if (!BM) return `<div class="view-head"><h1>입찰 공고</h1></div><div class="card empty"><p><b>bid-match.js</b> 파일을 찾지 못했어요. 앱 파일을 올릴 때 index.html·sw.js와 함께 <b>bid-match.js</b>도 같은 폴더에 올려 주세요.</p></div>`;
+  const cfg = S.bidCfg, hasF = BM.hasFilters(cfg), ready = S.phase === 'ready', t = today();
+  const head = `<div class="view-head"><h1>입찰 공고</h1><div class="head-acts">${canWrite() ? `<button type="button" class="btn sm${hasF ? '' : ' primary'}" data-act="bid-cfg">${ICON.filter}조건${hasF ? '' : ' 정하기'}</button>` : ''}<button type="button" class="icon-btn" data-act="bids-reload" aria-label="공고 새로 받기"${S.feed.st === 'loading' ? ' disabled' : ''}>${ICON.refresh}</button></div></div>`;
+  if (!ready) return head + loadingCard();
+  const matches = hasF ? bidMatches() : [];
+  const saved = S.bids.filter(b => b.st === 'saved'), hidden = S.bids.filter(b => b.st === 'hidden');
+  const active = saved.filter(b => !b.done && (!bidDate(b) || bidDate(b) >= t)), late = saved.filter(b => !b.done && bidDate(b) && bidDate(b) < t), done = saved.filter(b => b.done);
+  const v = S.ui.bidView;
+  const seg = [['new', '새 공고', matches.length], ['saved', '저장함', active.length + late.length], ['hidden', '숨김', hidden.length]].map(([k, lab, n]) => `<button type="button" class="lchip" data-act="bid-view" data-v="${k}" aria-pressed="${v === k}">${lab}<b>${n}</b></button>`).join('');
+  let body = '';
+  if (v === 'new') {
+    if (!hasF) body = `<div class="card empty"><p><b>어떤 공고를 찾을지</b> 먼저 정해 주세요. 키워드(예: 전기, 소방, 청소), 업종·면허, 지역, 금액을 정하면 맞는 공고만 골라 보여 드리고, 새로 올라오면 폰으로도 알려 드려요.</p>${canWrite() ? `<div class="empty-acts"><button type="button" class="btn sm primary" data-act="bid-cfg">${ICON.filter}조건 정하기</button></div>` : ''}</div>`;
+    else if (S.feed.st === 'none') body = `<div class="card empty"><p>아직 받아 둔 공고 파일이 없어요. 설명서의 <b>6단계</b>대로 나라장터 API 키를 넣고 GitHub Actions를 켜면, 하루 4번 공고를 받아 와서 여기에 보여 드려요.</p><p class="hint">GitHub 저장소 → <b>Actions</b> → <b>나라장터 공고 받기</b> → <b>Run workflow</b>를 누르면 바로 한 번 받아 와요.</p></div>`;
+    else if (S.feed.st === 'err' && !S.feed.items.length) body = `<div class="card empty"><p>공고를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 받아 주세요.</p><div class="empty-acts"><button type="button" class="btn sm" data-act="bids-reload">${ICON.refresh}다시 받기</button></div></div>`;
+    else if (S.feed.st === 'loading' && !S.feed.items.length) body = loadingCard();
+    else if (!matches.length) body = `<div class="card empty"><p>지금 조건에 맞는 새 공고가 없어요. 받아 둔 ${S.feed.days}일 치 공고 ${S.feed.items.length.toLocaleString('ko-KR')}건을 봤어요.</p><p class="hint">키워드를 더 넓게(예: ‘전기공사’ → ‘전기’) 적거나 종류·지역 조건을 풀어 보세요.</p></div>`;
+    else body = `<ul class="card rows">${matches.slice(0, FEED_MAX_ROWS).map(feedRow).join('')}${matches.length > FEED_MAX_ROWS ? `<li class="bid-more">${matches.length - FEED_MAX_ROWS}건이 더 있어요. 조건을 조금 더 좁혀 주세요.</li>` : ''}</ul><p class="hint">공고를 눌러 내용을 보고 <b>저장</b>(참여 후보)하거나 <b>숨기기</b>를 누르세요. 저장한 입찰은 마감 3일 전에 미리 알려 드려요.</p>`;
+  } else if (v === 'saved') {
+    if (!saved.length) body = `<div class="card empty"><p>저장한 입찰이 없어요. <b>새 공고</b>에서 참여할 만한 공고를 저장해 두면 마감 D-day와 함께 여기 모여요.</p></div>`;
+    else body = `${active.length ? listCard(active.map(b => ({ k: 'bid', b })), '', { showDate: true }) : '<div class="card empty"><p>마감 전인 저장 입찰이 없어요.</p></div>'}
+      ${late.length ? `<section class="sec"><div class="sec-head"><h2>마감 지남 <span class="count">${late.length}</span></h2></div>${listCard(late.map(b => ({ k: 'bid', b })), '', { showDate: true })}<p class="hint">참여(제출)했으면 체크해 두세요. 안 했으면 열어서 삭제해도 돼요.</p></section>` : ''}
+      ${done.length ? `<details class="fold sec" data-tog="bid-done"${S.ui.bidDoneOpen ? ' open' : ''}><summary><h2>끝낸 입찰</h2><span class="muted">${done.length}건</span></summary>${listCard(done.map(b => ({ k: 'bid', b })), '', { showDate: true, neutral: true })}</details>` : ''}`;
+  } else {
+    body = hidden.length ? `<ul class="card rows">${hidden.map(b => `<li class="row bid is-done" style="--c:var(--c-${BID_COLOR})"><button type="button" class="row-btn" data-act="open-bid" data-id="${b.id}"><span class="row-time"><b>${bidDate(b) ? bidDate(b).slice(5).replace('-', '.') : '—'}</b>마감</span><span class="row-main"><span class="row-title"><span class="bid-cat">${esc(b.c)}</span>${esc(b.t)}</span><span class="row-sub">${[b.i ? esc(b.i) : '', bidAmt(b)].filter(Boolean).join(' · ')}</span></span></button>${canWrite() ? `<span class="row-end"><button type="button" class="icon-btn sm" data-act="bid-unhide" data-id="${b.id}" aria-label="${esc(b.t)} 다시 보기">${ICON.x}</button></span>` : ''}</li>`).join('')}</ul><p class="hint">숨긴 공고는 새 공고 목록에 나오지 않아요. ✕를 누르면 다시 보여요.</p>` : '<div class="card empty"><p>숨긴 공고가 없어요.</p></div>';
+  }
+  const notifyLine = hasF && canWrite() && notifPerm() !== 'unsupported' ? (P.notify && P.bidNotify && notifPerm() === 'granted' ? '<span>새 공고 폰 알림 <b>켜짐</b></span><button type="button" class="link" data-act="bid-notify">끄기</button>' : P.notify && notifPerm() === 'granted' ? '<span>새 공고 폰 알림 <b>꺼짐</b></span><button type="button" class="link" data-act="bid-notify">켜기</button>' : '<button type="button" class="link" data-act="notify-on">새 공고가 올라오면 폰 알림 받기</button>') : '';
+  return `${head}
+    <div class="bid-seg" role="group" aria-label="보기">${seg}</div>
+    ${hasF ? `<p class="bid-src bid-cfgline">${cfgSummary(cfg)}</p>` : ''}
+    <p class="bid-src bid-status">${feedStatus()}${notifyLine}</p>
+    ${body}`;
+}
+/* 공고 자세히 보기 + 저장·숨김 (it: 공고 파일 항목 또는 저장한 입찰) */
+function sheetBid(it) {
+  const b = bidById(it.id), isSaved = !!b && b.st === 'saved', isHidden = !!b && b.st === 'hidden', t = today(), d = bidDate(it);
+  const row = (lab, val) => val ? `<li><span>${lab}</span><b>${val}</b></li>` : '';
+  const dd = d ? ` <span class="dd${d < t ? ' late' : ''}">${d < t ? '마감 지남' : dday(d)}</span>` : '';
+  const kv = `<ul class="kv bid-kv">
+    ${row('공고번호', `${esc(it.n)}-${esc(it.o || '00')}${it.k ? ` · ${esc(it.k)}` : ''}`)}
+    ${row('공고기관', esc(it.i))}${it.d && it.d !== it.i ? row('수요기관', esc(it.d)) : ''}
+    ${row('게시', fmtStamp(it.p))}
+    ${row('입찰 마감', (it.e ? fmtStamp(it.e) : '미정') + dd)}
+    ${row('개찰', fmtStamp(it.g))}
+    ${row('추정가격', it.q ? `${won(it.q)} <small class="muted">(${wonShort(it.q)})</small>` : '')}
+    ${row('배정예산', it.b ? `${won(it.b)} <small class="muted">(${wonShort(it.b)})</small>` : '')}
+    ${row('계약방법', esc(it.m))}${row('입찰방식', esc(it.w))}
+    ${row('참가 지역', esc(it.r))}${row('업종·면허', esc(it.l))}${row('분류', esc(it.s))}
+  </ul>`;
+  const link = it.u && /^https?:\/\//.test(it.u) ? `<a class="btn sm bid-link" href="${esc(it.u)}" target="_blank" rel="noopener">${ICON.ext}나라장터에서 공고 보기</a>` : `<a class="btn sm bid-link" href="https://www.g2b.go.kr/" target="_blank" rel="noopener">${ICON.ext}나라장터 열기 <small class="muted">(공고번호로 검색)</small></a>`;
+  const formPart = isHidden ? '' : `${remindField('bd', b ? b.remind : BID_DEF_REMIND, 'e', '마감 미리 알림')}
+      <label class="field"><span class="lab">메모 <small>(선택)</small></span><textarea id="bd-memo" name="memo" class="short" rows="2" maxlength="500" placeholder="예: 견적 준비, 서류 확인">${esc(b ? b.memo : '')}</textarea></label>
+      ${isSaved ? `<label class="field-check"><span class="check"><input type="checkbox" id="bd-done" name="done"${b.done ? ' checked' : ''}><span></span></span>참여(제출)를 끝냈어요 <small class="muted">(알림이 멈춰요)</small></label>` : ''}`;
+  const foot = isHidden
+    ? `<footer class="sheet-foot"><div class="foot-main"><button type="button" class="btn" data-act="close-sheet">닫기</button>${canWrite() ? `<button type="button" class="btn primary" data-act="bid-unhide" data-id="${esc(it.id)}">다시 보기</button>` : ''}</div></footer>`
+    : isSaved ? sheetFoot(true)
+    : `<footer class="sheet-foot">${canWrite() ? `<div class="del-zone"><button type="button" class="btn" data-act="bid-hide" data-id="${esc(it.id)}">${ICON.hide}숨기기</button></div>` : ''}<div class="foot-main"><button type="button" class="btn" data-act="close-sheet">닫기</button>${canWrite() ? `<button type="submit" class="btn primary">${ICON.save}저장</button>` : ''}</div></footer>`;
+  openSheet(`<form class="sheet" data-form="bid" novalidate>
+    ${sheetHead(isSaved ? '저장한 입찰' : isHidden ? '숨긴 공고' : '입찰 공고', `<span class="bid-cat">${esc(it.c)}</span>${isSaved ? '참여 후보로 저장해 둔 공고예요.' : isHidden ? '새 공고 목록에서 숨긴 공고예요.' : '저장하면 마감 전에 미리 알려 드려요.'}`)}
+    <div class="sheet-body">
+      <h3 class="bid-title">${esc(it.t)}</h3>
+      ${kv}
+      ${link}
+      ${formPart}
+      <p class="form-err" role="alert" hidden></p>
+    </div>
+    ${foot}
+  </form>`, { type: 'bid', prev: b || null, item: it, id: it.id, delQ: '저장한 입찰을 지울까요? (새 공고 목록에 다시 나와요)' });
+  bdSync(dlg.querySelector('form'));
+}
+function bdSync(f) {
+  const el = f.querySelector('#bd-rm-prev'); if (!el) return;
+  const d = bidDate(S.sheet && S.sheet.item), leads = remPicked(f);
+  el.innerHTML = d && leads.length ? `알림 날짜: ${remPreview(d, leads)}` : d ? '' : '마감일이 없는 공고라 미리 알림이 울리지 않아요.';
+}
+/* 공고 조건 입력 창 */
+function sheetBidCfg() {
+  const c = S.bidCfg || BM.normFilters({});
+  const lines = arr => esc(arr.join(', '));
+  openSheet(`<form class="sheet" data-form="bidcfg" novalidate>
+    ${sheetHead('공고 조건', '이 조건에 맞는 공고만 보여 주고, 새로 올라오면 알려 드려요. 조건은 PC·폰에 같이 저장돼요.')}
+    <div class="sheet-body">
+      <div class="field"><span class="lab" id="bc-cats-l">종류</span><div class="cat-chips" role="group" aria-labelledby="bc-cats-l">${BM.BID_CATS.map(k => `<label><input type="checkbox" name="cats" value="${k}"${c.cats.includes(k) ? ' checked' : ''}><span>${k}</span></label>`).join('')}</div></div>
+      <label class="field"><span class="lab">키워드 <small>(공고명에 이 말이 하나라도 들어가면 · 쉼표나 줄바꿈으로 나눠요)</small></span><textarea id="bc-kw" name="kw" class="short" rows="2" placeholder="예: 전기, 소방, 통신공사, 청소" data-autofocus>${lines(c.kw)}</textarea></label>
+      <label class="field"><span class="lab">제외 키워드 <small>(선택 · 이 말이 들어간 공고는 빼요)</small></span><input id="bc-ex" name="ex" value="${lines(c.ex)}" placeholder="예: 설계, 감리" autocomplete="off"></label>
+      <label class="field"><span class="lab">업종·면허 <small>(선택 · 공고의 참가 자격에 이 말이 있으면 · 자격 제한이 없는 공고는 그대로 보여요)</small></span><input id="bc-lic" name="lic" value="${lines(c.lic)}" placeholder="예: 전기공사업, 정보통신공사업" autocomplete="off"></label>
+      <div class="row2">
+        <label class="field"><span class="lab">지역 <small>(선택)</small></span><input id="bc-region" name="region" value="${lines(c.region)}" placeholder="예: 서울, 경기" autocomplete="off"></label>
+        <label class="field"><span class="lab">기관 <small>(선택)</small></span><input id="bc-inst" name="inst" value="${lines(c.inst)}" placeholder="예: 교육청, 한국전력" autocomplete="off"></label>
+      </div>
+      <div class="field"><span class="lab">금액 <small>(선택 · 추정가격 기준, 없으면 배정예산)</small></span><div class="row2"><span class="suffix"><input id="bc-min" name="min" inputmode="numeric" autocomplete="off" value="${c.min ? c.min.toLocaleString('ko-KR') : ''}" placeholder="최소" data-money aria-label="최소 금액"><i>원</i></span><span class="suffix"><input id="bc-max" name="max" inputmode="numeric" autocomplete="off" value="${c.max ? c.max.toLocaleString('ko-KR') : ''}" placeholder="최대" data-money aria-label="최대 금액"><i>원</i></span></div></div>
+      <p class="hint">지역·업종은 공고에 제한이 적힌 경우에만 걸러요. 전국·제한 없음 공고는 키워드만 맞으면 보여요. 공고명은 띄어쓰기를 무시하고 비교해요.</p>
+      <p class="form-err" role="alert" hidden></p>
+    </div>
+    ${sheetFoot(false)}
+  </form>`, { type: 'bidcfg' });
+}
+
+/* ----- 살 것 (사고 싶은 제품) ----- */
+function wantRow(w, opt = {}) {
+  const PR = WANT_PRIO[w.prio];
+  const sub = [
+    w.done ? `<b class="kind">${w.doneAt ? fmtMD(w.doneAt) + ' 삼' : '샀어요'}</b>${w.paid && w.paid !== w.price ? ` ${won(w.paid)}` : ''}` : opt.showPrio ? `<b class="kind">${PR.label}</b>` : '',
+    w.shop ? esc(w.shop) : '', w.cat ? esc(w.cat) : '', w.memo ? esc(w.memo) : ''
+  ].filter(Boolean).join(' · ');
+  return `<li class="row want${w.done ? ' is-done' : ''}" style="--c:var(--c-${PR.color})"><button type="button" class="row-btn" data-act="open-want" data-id="${w.id}"><span class="row-time price">${w.price ? `<b>${wonShort(w.price)}</b>` : '<small>가격 미정</small>'}</span><span class="row-main"><span class="row-title">${esc(w.name)}</span>${sub ? `<span class="row-sub">${sub}</span>` : ''}</span></button>${w.url ? `<span class="row-end"><a class="icon-btn sm want-link" href="${esc(w.url)}" target="_blank" rel="noopener" aria-label="${esc(w.name)} 링크 열기">${ICON.ext}</a></span>` : ''}${chk('want', w.done, `data-id="${w.id}"`, `${w.name} 샀어요`)}</li>`;
+}
+const wantSum = arr => arr.reduce((a, w) => a + w.price, 0);
+function viewWant() {
+  const ready = S.phase === 'ready';
+  const head = `<div class="view-head"><h1>사고 싶은 것</h1><div class="head-acts">${canWrite() ? `<button type="button" class="btn sm primary" data-act="new-want">${ICON.plus}적기</button>` : ''}</div></div>`;
+  if (!ready) return head + loadingCard();
+  const open = S.wants.filter(w => !w.done), done = S.wants.filter(w => w.done).sort((a, b) => (a.doneAt > b.doneAt ? -1 : a.doneAt < b.doneAt ? 1 : b.updatedAt - a.updatedAt));
+  if (!S.wants.length) return head + `<div class="card empty"><p>아직 적어 둔 제품이 없어요. 사고 싶은 제품의 <b>이름·가격·링크</b>를 적어 두면 우선순위별로 모아 보여 주고, 사면 체크해서 정리할 수 있어요.</p>${canWrite() ? `<div class="empty-acts"><button type="button" class="btn sm primary" data-act="new-want">${ICON.plus}첫 제품 적기</button></div>` : ''}</div>`;
+  const sort = P.wantSort;
+  const stat = `<p class="bid-src"><span>아직 안 산 것 <b>${open.length}개</b></span>${open.length ? `<span>합계 <b>${won(wantSum(open))}</b></span>` : ''}${done.length ? `<span>산 것 <b>${done.length}개</b></span>` : ''}</p>`;
+  const sortRow = open.length > 1 ? `<div class="want-sort" role="group" aria-label="정렬">${WANT_SORTS.map(([k, lab]) => `<button type="button" class="lchip" data-act="want-sort" data-v="${k}" aria-pressed="${sort === k}">${lab}</button>`).join('')}</div>` : '';
+  let body = '';
+  if (!open.length) body = '<div class="card empty"><p>안 산 것이 없어요. 다 샀네요!</p></div>';
+  else if (sort === 'prio') {
+    body = [1, 2, 3].map(p => {
+      const arr = open.filter(w => w.prio === p); if (!arr.length) return '';
+      const PR = WANT_PRIO[p];
+      return `<section class="sec want-sec"><div class="sec-head"><h2><i class="dot" style="--c:var(--c-${PR.color})"></i>${PR.label} <span class="count">${arr.length}</span></h2>${wantSum(arr) ? `<span class="sum">${won(wantSum(arr))}</span>` : ''}</div><ul class="card rows">${arr.map(w => wantRow(w)).join('')}</ul></section>`;
+    }).join('');
+  } else {
+    const arr = open.slice().sort(sort === 'price-desc' ? (a, b) => b.price - a.price || wantCmp(a, b) : sort === 'price-asc' ? (a, b) => (a.price || Infinity) - (b.price || Infinity) || wantCmp(a, b) : (a, b) => b.createdAt - a.createdAt);
+    body = `<ul class="card rows">${arr.map(w => wantRow(w, { showPrio: true })).join('')}</ul>`;
+  }
+  const doneSec = done.length ? `<details class="fold sec" data-tog="want-done"${S.ui.wantDoneOpen ? ' open' : ''}><summary><h2>산 것</h2><span class="muted">${done.length}개 · ${won(done.reduce((a, w) => a + (w.paid || w.price), 0))}</span></summary><ul class="card rows">${done.map(w => wantRow(w)).join('')}</ul><p class="hint">체크를 풀면 다시 사고 싶은 목록으로 돌아가요.</p></details>` : '';
+  return `${head}${stat}${sortRow}${body}${doneSec}`;
+}
+function sheetWant(w) {
+  const isNew = !w;
+  const x = w || { id: uid('w'), name: '', price: 0, url: '', shop: '', prio: 2, cat: '', memo: '', done: false, doneAt: '', paid: 0 };
+  const cats = [...new Set(S.wants.map(v => v.cat).filter(Boolean))].slice(0, 12);
+  openSheet(`<form class="sheet" data-form="want" novalidate>
+    ${sheetHead(isNew ? '사고 싶은 것 적기' : '사고 싶은 것 고치기')}
+    <div class="sheet-body">
+      <label class="field"><span class="lab">제품 이름</span><input id="wt-name" name="name" maxlength="80" value="${esc(x.name)}" placeholder="예: 무선 청소기, 러닝화" autocomplete="off" data-autofocus></label>
+      <div class="row2">
+        <div class="field"><label class="lab" for="wt-price">예상 가격 <small>(선택)</small></label><span class="suffix"><input id="wt-price" name="price" inputmode="numeric" autocomplete="off" value="${x.price ? x.price.toLocaleString('ko-KR') : ''}" placeholder="예: 350,000" data-money><i>원</i></span></div>
+        <label class="field"><span class="lab">어디서 <small>(선택)</small></span><input id="wt-shop" name="shop" maxlength="40" value="${esc(x.shop)}" placeholder="예: 쿠팡, 다이소" autocomplete="off"></label>
+      </div>
+      <label class="field"><span class="lab">링크 <small>(선택 · 제품 페이지 주소)</small></span><input id="wt-url" name="url" type="url" inputmode="url" maxlength="500" value="${esc(x.url)}" placeholder="https://" autocomplete="off" spellcheck="false"></label>
+      <div class="field"><span class="lab" id="wt-prio-l">우선순위</span><div class="seg" role="radiogroup" aria-labelledby="wt-prio-l">${[1, 2, 3].map(p => `<label><input type="radio" id="wt-prio-${p}" name="prio" value="${p}"${p === x.prio ? ' checked' : ''}><span><i class="dot" style="--c:var(--c-${WANT_PRIO[p].color})"></i>${WANT_PRIO[p].label}</span></label>`).join('')}</div></div>
+      <label class="field"><span class="lab">분류 <small>(선택)</small></span><input id="wt-cat" name="cat" maxlength="20" value="${esc(x.cat)}" placeholder="예: 가전, 옷, 취미" autocomplete="off" list="wt-cat-list"><datalist id="wt-cat-list">${cats.map(c => `<option value="${esc(c)}">`).join('')}</datalist></label>
+      <label class="field"><span class="lab">메모 <small>(선택)</small></span><textarea id="wt-memo" name="memo" class="short" rows="2" maxlength="300" placeholder="예: 세일 기다리는 중, 색은 검정">${esc(x.memo)}</textarea></label>
+      ${isNew ? '' : `<label class="field-check"><span class="check"><input type="checkbox" id="wt-done" name="done"${x.done ? ' checked' : ''}><span></span></span>샀어요</label>
+      <div class="want-done-box" id="wt-done-box"${x.done ? '' : ' hidden'}><div class="row2">
+        <label class="field"><span class="lab">산 날짜</span><input id="wt-doneAt" name="doneAt" type="date" value="${x.doneAt || today()}"></label>
+        <div class="field"><label class="lab" for="wt-paid">실제 낸 돈 <small>(선택)</small></label><span class="suffix"><input id="wt-paid" name="paid" inputmode="numeric" autocomplete="off" value="${x.paid ? x.paid.toLocaleString('ko-KR') : ''}" placeholder="${x.price ? x.price.toLocaleString('ko-KR') : '0'}" data-money><i>원</i></span></div>
+      </div></div>`}
+      <p class="form-err" role="alert" hidden></p>
+    </div>
+    ${sheetFoot(!isNew)}
+  </form>`, { type: 'want', prev: w, id: x.id, delQ: '이 제품을 목록에서 지울까요?' });
+}
+function wtSync(f) { const c = f.querySelector('#wt-done'), box = f.querySelector('#wt-done-box'); if (c && box) box.hidden = !c.checked; }
 
 /* ----- 로그인 ----- */
 function viewAuth() {
@@ -1501,9 +1889,9 @@ function draw() {
   const v = S.gate ? 'auth' : S.phase === 'error' ? 'err' : S.ui.tab;
   for (const b of document.querySelectorAll('.tab')) b.setAttribute('aria-current', b.dataset.tab === S.ui.tab ? 'page' : 'false');
   $('#gear').setAttribute('aria-current', S.ui.tab === 'set' ? 'page' : 'false');
-  const views = { today: viewToday, cal: viewCal, rt: viewRt, rec: viewRec, proj: viewProj, set: viewSet, auth: viewAuth, err: viewErr };
+  const views = { today: viewToday, cal: viewCal, rt: viewRt, rec: viewRec, proj: viewProj, bid: viewBid, want: viewWant, set: viewSet, auth: viewAuth, err: viewErr };
   for (const k of Object.keys(views)) { const el = $('#v-' + k), on = k === v; el.hidden = !on; if (on) el.innerHTML = views[k](); else if (el.firstChild) el.innerHTML = ''; }
-  $('#fab').hidden = !canWrite() || v === 'set' || (v === 'proj' && S.ui.pjSort && !S.ui.proj);
+  $('#fab').hidden = !canWrite() || v === 'set' || v === 'bid' || (v === 'proj' && S.ui.pjSort && !S.ui.proj);
   drawSync();
   restoreFocus(f);
   if (S.phase === 'ready' || S.gate) remQueue(); /* 기록이 바뀌면 폰 알림 목록도 새로 */
@@ -1565,18 +1953,24 @@ function swReady(ms = 3000) {
 function remSchedule() {
   const t = today(), on = P.notify && notifPerm() === 'granted' && canWrite();
   const items = !on ? [] : remindersBetween(addDays(t, -3), addDays(t, 400)).filter(x => !P.remSeen[x.k]).map(x => ({
-    k: x.k, g: x.g, fire: x.fire, occ: x.occ, title: x.title,
-    sub: [`${fmtMD(x.occ)}${x.time ? ' ' + fmtTime(x.time) : ''}`, x.amount ? won(x.amount) : '', `${leadLong(x.lead)} 알림`].filter(Boolean).join(' · ')
+    k: x.k, g: x.g, fire: x.fire, occ: x.occ, title: x.title, url: x.kind === 'bid' ? './#bid' : './',
+    sub: [`${fmtMD(x.occ)}${x.time ? ' ' + fmtTime(x.time) : ''}${x.note ? ' ' + x.note : ''}`, x.amount ? won(x.amount) : '', `${leadLong(x.lead)} 알림`].filter(Boolean).join(' · ')
   }));
   return { v: 1, on, items };
 }
-let remTimer = 0, remLast = '';
+/* 서비스워커가 새 입찰 공고를 찾아 알릴 때 쓸 조건 — seen: 앱에서 이미 본 공고, acted: 저장·숨김한 공고 (둘 다 새 공고 알림에서 빼요) */
+function bidsSchedule() {
+  const on = P.notify && P.bidNotify && notifPerm() === 'granted' && canWrite() && !!BM && !!S.bidCfg && BM.hasFilters(S.bidCfg);
+  return { v: 1, on, filters: on ? S.bidCfg : null, seen: on ? P.bidSeen : {}, acted: on ? S.bids.map(b => b.id) : [] };
+}
+let remTimer = 0, remLast = '', bidsLast = '';
 function remQueue() { clearTimeout(remTimer); remTimer = setTimeout(remSync, 800); }
 async function remSync(force) {
   if (!('indexedDB' in window) || (S.phase !== 'ready' && !S.gate && !force)) return; /* 불러오는 중에는 덮어쓰지 않음 (로그아웃이면 비움) */
   const sch = remSchedule(), s = JSON.stringify(sch);
-  if (s === remLast && !force) return;
-  try { await kvSet('schedule', { ...sch, at: Date.now() }); remLast = s; } catch (e) { /* 저장소를 못 쓰면 오늘 화면 알림만 */ }
+  if (s !== remLast || force) { try { await kvSet('schedule', { ...sch, at: Date.now() }); remLast = s; } catch (e) { /* 저장소를 못 쓰면 오늘 화면 알림만 */ } }
+  const bs = bidsSchedule(), b = JSON.stringify(bs);
+  if (b !== bidsLast || force) { try { await kvSet('bids', { ...bs, at: Date.now() }); bidsLast = b; } catch (e) { /* 무시 */ } }
 }
 async function remMarkShown(keys) {
   if (!keys.length || !('indexedDB' in window)) return;
@@ -1635,20 +2029,19 @@ function remindToast(msg, hasRemind) {
 
 /* ================= 저장소 =================
    이 기기(localStorage) 또는 내 Firebase 계정(Firestore) — 둘 다 같은 모양으로 다룹니다. */
-const EMPTY_DATA = () => ({ trackers: {}, projects: {}, routines: {}, months: {} });
+const COLS = ['trackers', 'projects', 'routines', 'bids', 'settings', 'wants']; /* months 는 따로 */
+const EMPTY_DATA = () => ({ trackers: {}, projects: {}, routines: {}, months: {}, bids: {}, settings: {}, wants: {} });
 function readLocalRaw() {
-  try { const v = JSON.parse(localStorage.getItem(LS_DATA) || 'null'); if (v && typeof v === 'object') return { trackers: objOr(v.trackers), projects: objOr(v.projects), routines: objOr(v.routines), months: objOr(v.months) }; } catch (e) { /* 손상된 값 */ }
+  try { const v = JSON.parse(localStorage.getItem(LS_DATA) || 'null'); if (v && typeof v === 'object') { const out = { months: objOr(v.months) }; for (const c of COLS) out[c] = objOr(v[c]); return out; } } catch (e) { /* 손상된 값 */ }
   return EMPTY_DATA();
 }
 function countData(d) {
-  let n = Object.keys(d.trackers).length + Object.keys(d.projects).length + Object.keys(objOr(d.routines)).length;
+  let n = Object.keys(d.trackers).length + Object.keys(d.projects).length + Object.keys(objOr(d.routines)).length + Object.keys(objOr(d.bids)).length + Object.keys(objOr(d.wants)).length;
   for (const m of Object.values(d.months)) n += Object.keys(objOr(m && m.events)).length + Object.keys(objOr(m && m.logs)).length;
   return n;
 }
 function mergeInto(t, s) {
-  Object.assign(t.trackers, s.trackers);
-  Object.assign(t.projects, s.projects);
-  t.routines = Object.assign(objOr(t.routines), s.routines);
+  for (const c of COLS) t[c] = Object.assign(objOr(t[c]), objOr(s[c]));
   for (const [ym, m] of Object.entries(s.months)) {
     const tm = t.months[ym] || (t.months[ym] = { ym, events: {}, logs: {} });
     tm.ym = ym; tm.events = Object.assign(objOr(tm.events), m.events); tm.logs = Object.assign(objOr(tm.logs), m.logs);
@@ -1662,16 +2055,17 @@ function makeLocalStore() {
   const write = () => { try { localStorage.setItem(LS_DATA, JSON.stringify(data)); } catch (e) { data = readLocalRaw(); emit(); throw { code: 'local-quota' }; } };
   window.addEventListener('storage', e => { if (e.key === LS_DATA) { data = readLocalRaw(); emit(); } });
   const watch = (pickFn, next) => { const fn = () => next(pickFn()); subs.add(fn); queueMicrotask(fn); return () => subs.delete(fn); };
+  const colOf = name => (data[name] = objOr(data[name]));
   return {
     kind: 'local',
-    watchCol: (name, next) => watch(() => new Map(Object.entries(data[name]).map(([k, v]) => [k, clone(v)])), next),
+    watchCol: (name, next) => watch(() => new Map(Object.entries(colOf(name)).map(([k, v]) => [k, clone(v)])), next),
     watchMonths: (from, to, next) => watch(() => new Map(Object.entries(data.months).filter(([k]) => k >= from && k <= to).map(([k, v]) => [k, clone(v)])), next),
     async putMonthItem(ym, field, id, body) { const m = data.months[ym] || (data.months[ym] = { ym, events: {}, logs: {} }); m[field] = objOr(m[field]); m[field][id] = clone(body); write(); emit(); },
     async delMonthItems(ym, field, ids) { const m = data.months[ym]; if (!m || !m[field]) return; for (const id of ids) delete m[field][id]; write(); emit(); },
-    async setDoc(col, id, body) { data[col][id] = clone(body); write(); emit(); },
-    async updateDoc(col, id, patch) { if (!data[col][id]) throw { code: 'not-found' }; Object.assign(data[col][id], clone(patch)); write(); emit(); },
-    async patchMany(col, patches) { for (const [id, patch] of Object.entries(patches)) if (data[col][id]) Object.assign(data[col][id], clone(patch)); write(); emit(); },
-    async deleteDoc(col, id) { delete data[col][id]; write(); emit(); },
+    async setDoc(col, id, body) { colOf(col)[id] = clone(body); write(); emit(); },
+    async updateDoc(col, id, patch) { if (!colOf(col)[id]) throw { code: 'not-found' }; Object.assign(data[col][id], clone(patch)); write(); emit(); },
+    async patchMany(col, patches) { for (const [id, patch] of Object.entries(patches)) if (colOf(col)[id]) Object.assign(data[col][id], clone(patch)); write(); emit(); },
+    async deleteDoc(col, id) { delete colOf(col)[id]; write(); emit(); },
     async exportAll() { return clone(data); },
     async importAll(d) { mergeInto(data, d); write(); emit(); }
   };
@@ -1698,14 +2092,12 @@ function makeCloudStore(fb, userId) {
     deleteDoc: (c, id) => F.deleteDoc(ref(c, id)),
     async exportAll() {
       const out = EMPTY_DATA();
-      for (const name of ['trackers', 'projects', 'routines', 'months']) { const s = await F.getDocs(col(name)); s.forEach(d => { out[name][d.id] = d.data(); }); }
+      for (const name of [...COLS, 'months']) { const s = await F.getDocs(col(name)); s.forEach(d => { out[name][d.id] = d.data(); }); }
       return out;
     },
     importAll(d) {
       const ops = [];
-      for (const [id, b] of Object.entries(d.trackers)) ops.push(bt => bt.set(ref('trackers', id), b));
-      for (const [id, b] of Object.entries(d.projects)) ops.push(bt => bt.set(ref('projects', id), b));
-      for (const [id, b] of Object.entries(objOr(d.routines))) ops.push(bt => bt.set(ref('routines', id), b));
+      for (const name of COLS) for (const [id, b] of Object.entries(objOr(d[name]))) ops.push(bt => bt.set(ref(name, id), b));
       for (const [ym, m] of Object.entries(d.months)) ops.push(bt => bt.set(ref('months', ym), { ym, events: m.events, logs: m.logs }, { merge: true }));
       const commits = [];
       for (let i = 0; i < ops.length; i += 400) { const bt = F.writeBatch(db); ops.slice(i, i + 400).forEach(f => f(bt)); commits.push(bt.commit()); }
@@ -1719,11 +2111,12 @@ function stopWatch() { for (const k of Object.keys(unsubs)) { try { unsubs[k]();
 function useStore(store) {
   stopWatch();
   S.store = store;
-  RAW.trackers = new Map(); RAW.projects = new Map(); RAW.routines = new Map(); RAW.months = new Map();
-  S.trackers = []; S.projects = []; S.routines = []; S.months = new Map();
-  S.loaded = { trackers: false, projects: false, routines: false, months: false };
+  for (const k of Object.keys(RAW)) RAW[k] = new Map();
+  S.trackers = []; S.projects = []; S.routines = []; S.months = new Map(); S.bids = []; S.wants = []; rebuildSettings();
+  S.loaded = { trackers: false, projects: false, routines: false, months: false, bids: false, settings: false, wants: false };
   S.phase = 'loading'; S.listenErr = '';
-  watchCol('trackers'); watchCol('projects'); watchCol('routines'); watchMonths(S.range.from, S.range.to);
+  for (const name of COLS) watchCol(name);
+  watchMonths(S.range.from, S.range.to);
   render();
 }
 function onListenErr(st) {
@@ -1735,17 +2128,18 @@ function onListenErr(st) {
   };
 }
 function settle() {
-  if (S.phase === 'loading' && S.loaded.trackers && S.loaded.projects && S.loaded.routines && S.loaded.months) S.phase = 'ready';
+  if (S.phase === 'loading' && Object.values(S.loaded).every(Boolean)) { S.phase = 'ready'; if (S.ui.tab === 'bid') bidTabEnter(); }
   if (S.phase === 'ready' && pendingStart && canWrite()) { const a = pendingStart; pendingStart = ''; setTimeout(() => { if (acts[a] && canWrite()) acts[a]({ dataset: {} }); }, 80); }
   render();
 }
+const REBUILD = { trackers: rebuildTrackers, projects: rebuildProjects, routines: rebuildRoutines, bids: rebuildBids, settings: rebuildSettings, wants: rebuildWants };
 function watchCol(name) {
   const st = S.store;
   if (unsubs[name]) unsubs[name]();
   unsubs[name] = st.watchCol(name, map => {
     if (S.store !== st) return;
     RAW[name] = map;
-    if (name === 'trackers') rebuildTrackers(); else if (name === 'routines') rebuildRoutines(); else rebuildProjects();
+    REBUILD[name]();
     S.loaded[name] = true; settle();
   }, onListenErr(st));
 }
@@ -1783,7 +2177,7 @@ function writeFail(e) {
     : code === 'not-found' && local ? '이미 지워진 항목이에요.'
     : code === 'not-found' || code === 'failed-precondition' ? 'Firestore 데이터베이스를 찾지 못했어요. 설명서 3-3단계를 확인해 주세요.'
     : '저장하지 못했어요. 인터넷 연결을 확인하고 다시 해 주세요.' + (code ? ` (${code})` : '');
-  rebuildTrackers(); rebuildProjects(); rebuildMonths();
+  rebuildTrackers(); rebuildProjects(); rebuildRoutines(); rebuildMonths(); rebuildBids(); rebuildSettings(); rebuildWants();
   render();
   toast(msg, null, true);
 }
@@ -1902,6 +2296,65 @@ function toggleRoutine(r, ym, on) {
   render();
   track(S.store.updateDoc('routines', r.id, { done, updatedAt: r.updatedAt }));
 }
+/* 입찰: 저장·숨김은 bids/공고번호-차수 문서 하나 (공고 내용도 같이 복사해 두어 공고 파일에서 사라져도 남음) */
+function putBid(b) {
+  if (!S.store) return false;
+  const i = S.bids.findIndex(x => x.id === b.id); if (i >= 0) S.bids[i] = b; else S.bids.push(b);
+  S.bids.sort(bidCmp);
+  render();
+  track(S.store.setDoc('bids', b.id, pick(b, BID_KEYS)));
+  return true;
+}
+function dropBid(b) {
+  if (!S.store) return false;
+  S.bids = S.bids.filter(x => x.id !== b.id);
+  render();
+  track(S.store.deleteDoc('bids', b.id));
+  return true;
+}
+/* 공고 파일 항목(또는 저장한 입찰)으로 저장 문서 만들기 */
+function bidFrom(it, extra) {
+  const now = Date.now(), prev = bidById(it.id);
+  const b = normBid(it.id, Object.assign(pick(it, BID_FIELDS), { st: 'saved', remind: BID_DEF_REMIND, memo: '', done: false, createdAt: prev ? prev.createdAt || now : now, updatedAt: now }, extra || {}));
+  return b;
+}
+function saveBid(it, extra) {
+  const b = bidFrom(it, extra);
+  if (!putBid(b)) return null;
+  P.bidSeen[b.id] = 1; savePrefs();
+  return b;
+}
+function hideBid(it) {
+  const prev = bidById(it.id);
+  if (!saveBid(it, { st: 'hidden', remind: [], memo: '', done: false })) return;
+  toast('공고를 숨겼어요.', { label: '되돌리기', fn: () => { const cur = bidById(it.id); if (!cur) return; if (prev) putBid(prev); else dropBid(cur); } });
+}
+/* 살 것 */
+function putWant(w) {
+  if (!S.store) return false;
+  const i = S.wants.findIndex(x => x.id === w.id); if (i >= 0) S.wants[i] = w; else S.wants.push(w);
+  S.wants.sort(wantCmp);
+  render();
+  track(S.store.setDoc('wants', w.id, pick(w, WANT_KEYS)));
+  return true;
+}
+function dropWant(w) {
+  if (!S.store) return false;
+  S.wants = S.wants.filter(x => x.id !== w.id);
+  render();
+  track(S.store.deleteDoc('wants', w.id));
+  return true;
+}
+function buyWant(w, on) {
+  return putWant({ ...w, done: on, doneAt: on ? (w.doneAt || today()) : '', paid: on ? (w.paid || w.price) : 0, updatedAt: Date.now() });
+}
+function putBidCfg(cfg) {
+  if (!S.store) return false;
+  S.bidCfg = cfg; S.bidCfgSet = true;
+  render();
+  track(S.store.setDoc('settings', 'bids', Object.assign(pick(cfg, CFG_KEYS), { updatedAt: Date.now() })));
+  return true;
+}
 function quickLog(tid) {
   const tr = trById(tid); if (!tr) return;
   const t = today();
@@ -1923,11 +2376,15 @@ function setStatus(p, s) {
 /* 백업 파일(또는 예전 수첩에서 옮긴 파일)을 안전한 모양으로 정리 */
 function sanitizeData(x) {
   const src = x && typeof x === 'object' ? (x.data && typeof x.data === 'object' ? x.data : x) : null;
-  if (!src || (!src.trackers && !src.projects && !src.routines && !src.months)) return null;
+  if (!src || (!src.trackers && !src.projects && !src.routines && !src.months && !src.bids && !src.wants)) return null;
   const out = EMPTY_DATA(); let n = 0;
   for (const [id, r] of Object.entries(objOr(src.trackers))) { if (!validId(id) || !r || typeof r !== 'object' || r.sample) continue; out.trackers[id] = pick(normTracker(id, r), TR_KEYS); n++; }
   for (const [id, r] of Object.entries(objOr(src.projects))) { if (!validId(id) || !r || typeof r !== 'object' || r.sample) continue; out.projects[id] = pick(normProject(id, r), PJ_KEYS); n++; }
   for (const [id, r] of Object.entries(objOr(src.routines))) { if (!validId(id) || !r || typeof r !== 'object' || r.sample) continue; out.routines[id] = pick(normRoutine(id, r), RT_KEYS); n++; }
+  for (const [id, r] of Object.entries(objOr(src.bids))) { if (!validId(id) || !r || typeof r !== 'object') continue; out.bids[id] = pick(normBid(id, r), BID_KEYS); n++; }
+  for (const [id, r] of Object.entries(objOr(src.wants))) { if (!validId(id) || !r || typeof r !== 'object') continue; out.wants[id] = pick(normWant(id, r), WANT_KEYS); n++; }
+  const cfgRaw = objOr(src.settings).bids;
+  if (BM && cfgRaw && typeof cfgRaw === 'object') { out.settings.bids = Object.assign(pick(BM.normFilters(cfgRaw), CFG_KEYS), { updatedAt: num(cfgRaw.updatedAt) || Date.now() }); n++; }
   const bucket = ym => out.months[ym] || (out.months[ym] = { ym, events: {}, logs: {} });
   for (const [ymKey, m] of Object.entries(objOr(src.months))) {
     if (!/^\d{4}-\d{2}$/.test(ymKey) || !m || typeof m !== 'object') continue;
@@ -2075,10 +2532,10 @@ function formErr(f, msg, focusId) { const p = f.querySelector('.form-err'); if (
 
 /* 미리 알림 고르기 (루틴·일정 입력 창 공용): 당일 · D-1 · D-3 · D-7 · D-14 · 1·2·3·6개월 전 + 직접 입력 */
 const remChip = (l, on, mode) => `<label class="rchip"${remOK(l, mode) ? '' : ' hidden'}><input type="checkbox" name="remind" value="${l}"${on ? ' checked' : ''}><span>${leadLabel(l)}</span></label>`;
-function remindField(pfx, sel, mode) {
+function remindField(pfx, sel, mode, label = '미리 알림') {
   const vals = [...new Set([...REM_PRESETS, ...sel])].sort((a, b) => leadDays(a) - leadDays(b));
   return `<div class="field rem-field" data-mode="${mode}">
-    <span class="lab" id="${pfx}-rm-l"><span class="bell-ic">${ICON.bell}</span>미리 알림 <small>(여러 개 고를 수 있어요)</small></span>
+    <span class="lab" id="${pfx}-rm-l"><span class="bell-ic">${ICON.bell}</span>${label} <small>(여러 개 고를 수 있어요)</small></span>
     <div class="rchips" role="group" aria-labelledby="${pfx}-rm-l">${vals.map(l => remChip(l, sel.includes(l), mode)).join('')}</div>
     <div class="rm-add"><span class="lab">직접</span><input id="${pfx}-rm-n" inputmode="numeric" maxlength="3" placeholder="예: 100" autocomplete="off" aria-label="얼마나 전에 알릴지 숫자"><select id="${pfx}-rm-u" aria-label="단위"><option value="d">일 전 (D-)</option><option value="m"${mode === 'm' ? ' hidden disabled' : ''}>개월 전</option></select><button type="button" class="btn sm" data-act="rm-add">추가</button></div>
     <p class="rm-prev" id="${pfx}-rm-prev" role="status"></p>
@@ -2099,7 +2556,7 @@ function remPreview(occ, leads) {
   const t = today();
   return leads.slice().sort((a, b) => leadDays(b) - leadDays(a)).map(l => { const f = fireDate(occ, l); return `<span class="${f < t ? 'past' : ''}">${leadLabel(l)} ${f === t ? '<b>오늘</b>' : f < t ? fmtRem(f) + ' (지남)' : `<b>${fmtRem(f)}</b>`}</span>`; }).join(' · ');
 }
-function formSync(f) { if (!f) return; if (f.dataset.form === 'routine') rtSync(f); else if (f.dataset.form === 'event') evSync(f); }
+function formSync(f) { if (!f) return; if (f.dataset.form === 'routine') rtSync(f); else if (f.dataset.form === 'event') evSync(f); else if (f.dataset.form === 'bid') bdSync(f); else if (f.dataset.form === 'want') wtSync(f); }
 const defDate = () => S.ui.tab === 'cal' ? S.ui.sel : today();
 
 function sheetAdd(date) {
@@ -2108,6 +2565,7 @@ function sheetAdd(date) {
     <button type="button" data-act="new-routine"><span class="ic">${ICON.repeat}</span><b>루틴 (매달·매년·몇 년마다)</b><span>카드 결제일·자동차보험·정기검사처럼 돌아오는 일을 한 번만 적어요</span></button>
     <button type="button" data-act="new-log" data-date="${date}"><span class="ic">${ICON.tally}</span><b>근무·횟수 기록</b><span>한 일을 도장 찍듯 하나씩 남겨요</span></button>
     <button type="button" data-act="new-project"><span class="ic">${ICON.list}</span><b>프로젝트</b><span>단계를 나눠 진행 상황을 체크해요</span></button>
+    <button type="button" data-act="new-want"><span class="ic">${ICON.bag}</span><b>사고 싶은 것</b><span>살 제품의 이름·가격·링크를 적어 두고 우선순위로 모아 봐요</span></button>
   </div></div></div>`, { type: 'add' });
 }
 function sheetEvent(ev, def = {}) {
@@ -2435,6 +2893,47 @@ const forms = {
     f.elements.text.value = ''; S.ui.drafts['na-text'] = '';
     patchProject(p, { notes: [...p.notes, { id: uid('n'), date, text: text.slice(0, 500), kind: '' }] });
   },
+  /* 사고 싶은 것 적기·고치기 */
+  want(f) {
+    if (!guard()) return;
+    const fd = new FormData(f), sh = S.sheet, prev = sh.prev, now = Date.now();
+    const name = String(fd.get('name') || '').trim();
+    if (!name) return formErr(f, '제품 이름을 적어 주세요.', 'wt-name');
+    let url = String(fd.get('url') || '').trim();
+    if (url && !/^[a-z][a-z0-9+.-]*:\/\//i.test(url)) url = 'https://' + url;
+    if (url) { try { const u = new URL(url); if (!/^https?:$/.test(u.protocol) || !u.hostname.includes('.')) throw 0; } catch (e) { return formErr(f, '링크 주소가 이상해요. https://로 시작하는 주소를 붙여 넣어 주세요.', 'wt-url'); } }
+    const done = prev ? fd.get('done') === 'on' : false;
+    const w = { id: sh.id, name: name.slice(0, 80), price: digits(fd.get('price')), url: url.slice(0, 500), shop: String(fd.get('shop') || '').trim().slice(0, 40),
+      prio: WANT_PRIO[+fd.get('prio')] ? +fd.get('prio') : 2, cat: String(fd.get('cat') || '').trim().slice(0, 20), memo: String(fd.get('memo') || '').trim().slice(0, 300),
+      done, doneAt: done ? (isDate(fd.get('doneAt')) ? fd.get('doneAt') : today()) : '', paid: done ? (digits(fd.get('paid')) || digits(fd.get('price'))) : 0,
+      order: prev ? prev.order : wantNextOrder(), createdAt: prev ? (prev.createdAt || now) : now, updatedAt: now };
+    closeSheet();
+    if (putWant(w)) toast(prev ? (w.done && !prev.done ? `‘${w.name}’ 샀어요. 산 것 목록으로 옮겼어요.` : '고쳤어요.') : `‘${w.name}’ 적어 뒀어요 · ${WANT_PRIO[w.prio].label}`);
+  },
+  /* 입찰 공고 저장 (참여 후보) · 저장한 입찰 고치기 */
+  bid(f) {
+    if (!guard()) return;
+    const fd = new FormData(f), sh = S.sheet, it = sh.item, prev = sh.prev;
+    if (prev && prev.st === 'hidden') return closeSheet();
+    const extra = { remind: normRemind(fd.getAll('remind'), 'e'), memo: String(fd.get('memo') || '').trim().slice(0, 500), done: prev ? fd.get('done') === 'on' : false };
+    closeSheet();
+    const b = saveBid(prev || it, extra);
+    if (!b) return;
+    const d = bidDate(b);
+    if (prev) toast(b.done && !prev.done ? '참여를 끝낸 입찰로 표시했어요.' : '저장한 입찰을 고쳤어요.');
+    else remindToast(d ? `입찰을 저장했어요. ${byFirst(b.remind).map(leadLong).join('·') || '정한 날'}에 알려 드릴게요.` : '입찰을 저장했어요.', b.remind.length > 0 && d > today());
+    if (!prev && S.ui.tab === 'bid' && S.ui.bidView === 'new' && !bidMatches().length) { S.ui.bidView = 'saved'; render(); }
+  },
+  bidcfg(f) {
+    if (!guard() || !BM) return;
+    const fd = new FormData(f);
+    const cfg = BM.normFilters({ cats: fd.getAll('cats'), kw: String(fd.get('kw') || ''), ex: String(fd.get('ex') || ''), lic: String(fd.get('lic') || ''), region: String(fd.get('region') || ''), inst: String(fd.get('inst') || ''), min: digits(fd.get('min')), max: digits(fd.get('max')) });
+    if (!BM.hasFilters(cfg)) return formErr(f, '키워드·업종·기관 중 하나는 적어 주세요. 아니면 공고가 너무 많이 나와요.', 'bc-kw');
+    if (cfg.min && cfg.max && cfg.max < cfg.min) return formErr(f, '최대 금액이 최소 금액보다 작아요.', 'bc-max');
+    closeSheet();
+    S.ui.bidView = 'new';
+    if (putBidCfg(cfg)) { toast('공고 조건을 저장했어요.'); bidTabEnter(); bidsLoad(true); }
+  },
   async auth(f) {
     if (!FB || S.authBusy) return;
     const m = S.authMode;
@@ -2458,6 +2957,8 @@ const deleters = {
   log(sh) { const l = sh.prev; if (dropItem('logs', l)) toast('기록을 지웠어요.', { label: '되돌리기', fn: () => putLog(null, l) }); },
   tracker(sh) { if (dropTracker(sh.prev)) toast('항목과 기록을 지웠어요.'); },
   routine(sh) { const r = sh.prev; if (dropRoutine(r)) toast('루틴을 지웠어요.', { label: '되돌리기', fn: () => putRoutine(r) }); },
+  bid(sh) { const b = sh.prev; if (b && dropBid(b)) toast('저장한 입찰을 지웠어요.', { label: '되돌리기', fn: () => putBid(b) }); },
+  want(sh) { const w = sh.prev; if (w && dropWant(w)) toast('목록에서 지웠어요.', { label: '되돌리기', fn: () => putWant(w) }); },
   project(sh) { const p = sh.prev; if (dropProject(p)) toast('프로젝트를 지웠어요.', { label: '되돌리기', fn: () => createProject(p) }); },
   task(sh) {
     const p = pjById(sh.pid); if (!p) return;
@@ -2472,7 +2973,10 @@ const hs = () => { const s = history.state; return s && typeof s.d === 'number' 
 function hPush(st) { try { history.pushState(st, ''); } catch (e) { /* 무시 */ } }
 function hReplace(st, url) { try { if (url) history.replaceState(st, '', url); else history.replaceState(st, ''); } catch (e) { /* 무시 */ } }
 let afterPop = null;
-function afterNav() { render(); window.scrollTo({ top: 0 }); }
+function afterNav() {
+  if (S.ui.tab === 'bid') bidTabEnter(); else S.ui.bidFresh = null;
+  render(); window.scrollTo({ top: 0 });
+}
 function goTab(tab) {
   const cur = hs();
   if (tab === S.ui.tab && !S.ui.proj) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
@@ -2559,7 +3063,7 @@ const acts = {
   'rt-now'() { S.ui.rtYm = ymOf(today()); render(); },
   'new-routine'() { if (guard()) sheetRoutine(null); },
   'open-routine'(el) { const r = rtById(el.dataset.id); if (r && guard()) sheetRoutine(r); },
-  add() { if (guard()) sheetAdd(defDate()); },
+  add() { if (!guard()) return; if (S.ui.tab === 'want') sheetWant(null); else sheetAdd(defDate()); },
   'new-event'(el) { if (guard()) sheetEvent(null, { date: el.dataset.date || defDate(), projectId: el.dataset.pid || '' }); },
   'new-log'(el) { if (guard()) sheetLog(null, { date: el.dataset.date || defDate(), trackerId: el.dataset.tid }); },
   'new-tracker'() { if (guard()) sheetTracker(null); },
@@ -2572,6 +3076,31 @@ const acts = {
   'new-project'() { if (guard()) sheetProject(null); },
   'open-event'(el) { const e = findItem('events', el.dataset.id, el.dataset.ym); if (e && guard()) sheetEvent(e); },
   'open-log'(el) { const l = findItem('logs', el.dataset.id, el.dataset.ym); if (l && guard()) sheetLog(l); },
+  /* 살 것 */
+  'new-want'() { if (guard()) sheetWant(null); },
+  'open-want'(el) { const w = wantById(el.dataset.id); if (w && guard()) sheetWant(w); },
+  'want-sort'(el) { P.wantSort = WANT_SORTS.some(([k]) => k === el.dataset.v) ? el.dataset.v : 'prio'; savePrefs(); render(); },
+  /* 입찰 */
+  'bid-view'(el) { S.ui.bidView = el.dataset.v; render(); },
+  'bid-cfg'() { if (guard() && BM) sheetBidCfg(); },
+  'bids-reload'() { bidsLoad(true); },
+  'bid-notify'() { P.bidNotify = !P.bidNotify; savePrefs(); render(); remQueue(); toast(P.bidNotify ? '조건에 맞는 새 공고가 올라오면 폰 알림으로 알려 드려요.' : '새 공고 폰 알림을 껐어요. 저장한 입찰의 마감 알림은 그대로 와요.'); },
+  'open-bid'(el) { const it = bidById(el.dataset.id) || feedItem(el.dataset.id); if (!it) { toast('이 공고는 받아 둔 목록에 없어요. 공고를 새로 받아 보세요.', null, true); return; } if (S.phase !== 'ready') { guard(); return; } sheetBid(it); },
+  'bid-save'(el) {
+    if (!guard()) return;
+    const it = feedItem(el.dataset.id); if (!it || bidById(it.id)) return;
+    const b = saveBid(it);
+    if (b) toast(`저장했어요. ${bidDate(b) ? '마감 3일 전에 알려 드릴게요.' : ''}`.trim(), { label: '되돌리기', fn: () => { const cur = bidById(it.id); if (cur) dropBid(cur); } });
+  },
+  'bid-hide'(el) { if (!guard()) return; const it = bidById(el.dataset.id) || feedItem(el.dataset.id); if (!it) return; if (dlg.open) closeSheet(); hideBid(it); },
+  'bid-unhide'(el) {
+    if (!guard()) return;
+    const b = bidById(el.dataset.id); if (!b) return;
+    if (dlg.open) closeSheet();
+    if (!dropBid(b)) return;
+    if (S.ui.bidView === 'hidden' && !S.bids.some(x => x.st === 'hidden')) { S.ui.bidView = 'new'; render(); }
+    toast('다시 새 공고 목록에 보여요.');
+  },
   'att-day'(el) {
     if (!guard()) return;
     const logs = (D.logByDate.get(el.dataset.date) || []).filter(l => l.trackerId === el.dataset.tid);
@@ -2686,6 +3215,12 @@ const chg = {
     const on = el.checked;
     if (on) buzz();
     patchProject(p, { tasks: p.tasks.map(t => t.id === el.dataset.tid ? { ...t, done: on, doneAt: on ? today() : '' } : t) });
+  },
+  bid(el) { const b = bidById(el.dataset.id); if (!b) return; if (el.checked) buzz(); putBid({ ...b, done: el.checked, updatedAt: Date.now() }); },
+  want(el) {
+    const w = wantById(el.dataset.id); if (!w) return;
+    if (el.checked) buzz();
+    if (buyWant(w, el.checked)) toast(el.checked ? `‘${w.name}’ 샀어요. 산 것 목록으로 옮겼어요.` : '다시 사고 싶은 목록으로 돌렸어요.', el.checked ? { label: '되돌리기', fn: () => { const cur = wantById(w.id); if (cur) buyWant(cur, false); } } : null);
   }
 };
 
@@ -2711,6 +3246,8 @@ document.addEventListener('change', e => {
   if (f && f.dataset.form === 'tracker') trSync(f);
   if (f && f.dataset.form === 'routine') { if (el.name === 'shift') el.dataset.auto = '0'; rtSync(f); }
   if (f && f.dataset.form === 'event') evSync(f);
+  if (f && f.dataset.form === 'bid') bdSync(f);
+  if (f && f.dataset.form === 'want') wtSync(f);
 });
 document.addEventListener('input', e => {
   const el = e.target;
@@ -2731,7 +3268,7 @@ document.addEventListener('toggle', e => {
   if (!d.matches || !d.matches('details[data-tog]')) return;
   const k = d.dataset.tog;
   if (k.startsWith('pj-')) { const s = k.slice(3); if (s in P.pjOpen && P.pjOpen[s] !== d.open) { P.pjOpen[s] = d.open; savePrefs(); } }
-  else if (k === 'rt-off') S.ui.rtOffOpen = d.open; else S.ui.openLogs[k] = d.open;
+  else if (k === 'rt-off') S.ui.rtOffOpen = d.open; else if (k === 'bid-done') S.ui.bidDoneOpen = d.open; else if (k === 'want-done') S.ui.wantDoneOpen = d.open; else S.ui.openLogs[k] = d.open;
 }, true);
 
 /* ----- 끌어서 순서 바꾸기 (손잡이를 잡고 위아래로) ----- */
@@ -2829,7 +3366,9 @@ function registerSW() {
   window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => { /* 무시 */ }); });
   /* 폰 알림을 누르면 서비스워커가 열려 있는 앱에 '오늘 화면으로' 라고 알려 줌 */
   navigator.serviceWorker.addEventListener('message', e => {
-    if (e.data && e.data.type === 'open-today') { if (dlg.open) closeSheet(); goTab('today'); }
+    if (!e.data) return;
+    if (e.data.type === 'open-today') { if (dlg.open) closeSheet(); goTab('today'); }
+    else if (e.data.type === 'open-bid') { if (dlg.open) closeSheet(); goTab('bid'); bidsLoad(true); }
   });
 }
 function boot() {
@@ -2840,6 +3379,7 @@ function boot() {
   if (CFG && P.mode !== 'local') startFirebase();
   else startLocal();
   draw();
+  if (S.ui.tab === 'bid') bidsLoad();
   /* 알림을 켜 둔 기기면, 앱이 꺼져 있을 때도 확인하도록 다시 부탁 (설치·권한 상태도 확인) */
   if (P.notify) bgSync(true).then(s => { S.notif.bg = s; if (S.ui.tab === 'set') render(); });
 }
